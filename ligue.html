@@ -1,0 +1,175 @@
+<head>
+    <style>
+        *,
+        *:before,
+        *:after {
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        #ligue-content {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            flex-direction: column;
+            background: linear-gradient(180deg, #5cd8ff 0%, #9fbaff 100%);
+            border-radius: 40px;
+            width: 380px;
+            height: 743px;
+        }
+
+        #ligue-upper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ligue__subtitle {
+            font-family: "PixelSplitter", sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 4px 4px 0 rgba(106, 121, 197, 0.25);
+        }
+
+        .ligue__wraper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 26px;
+        }
+
+        #ligue__button-back {
+            border: none;
+            border-radius: 15px;
+            width: 40px;
+            height: 40px;
+            box-shadow: 5px 5px 13px 0 rgba(86, 194, 230, 0.9), -5px -5px 10px 0 rgba(106, 237, 255, 0.9), 5px -5px 10px 0 rgba(86, 194, 230, 0.2), -5px 5px 10px 0 rgba(86, 194, 230, 0.2), inset -1px -1px 2px 0 rgba(86, 194, 230, 0.5), inset 1px 1px 2px 0 rgba(106, 237, 255, 0.3);
+            background: #fff;
+        }
+
+        #ligue__button-next {
+            border: none;
+            border-radius: 15px;
+            width: 40px;
+            height: 40px;
+            box-shadow: 5px 5px 13px 0 rgba(86, 194, 230, 0.9), -5px -5px 10px 0 rgba(106, 237, 255, 0.9), 5px -5px 10px 0 rgba(86, 194, 230, 0.2), -5px 5px 10px 0 rgba(86, 194, 230, 0.2), inset -1px -1px 2px 0 rgba(86, 194, 230, 0.5), inset 1px 1px 2px 0 rgba(106, 237, 255, 0.3);
+            background: #fff;
+        }
+
+        .ligue__value {
+            border-radius: 30px;
+            padding: 8px 9px;
+            width: 220px;
+            height: 50px;
+            box-shadow: -1px -1px 2px 0 rgba(122, 162, 209, 0.5), 1px 1px 2px 0 rgba(168, 224, 255, 0.3), inset 5px 5px 13px 0 rgba(122, 162, 209, 0.9), inset -5px -5px 10px 0 rgba(168, 224, 255, 0.9), inset 5px -5px 10px 0 rgba(122, 162, 209, 0.2), inset -5px 5px 10px 0 rgba(122, 162, 209, 0.2);
+            background: #91c1f9;
+            font-family: "PixelSplitter", sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: #004d94;
+        }
+
+        .ligue__value-iner {
+            border-radius: 20px;
+            padding: 7px 43px;
+            width: 203px;
+            height: 34px;
+            box-shadow: 1px 1px 3px 0 rgba(124, 186, 243, 0.9), -1px -1px 2px 0 rgba(255, 255, 255, 0.9), 1px -1px 2px 0 rgba(194, 205, 243, 0.2), -1px 1px 2px 0 rgba(187, 189, 246, 0.2), inset -1px -1px 2px 0 rgba(129, 170, 207, 0.5), inset 1px 1px 2px 0 rgba(255, 255, 255, 0.3);
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #ligue__busts {
+            border-radius: 20px;
+            height: 60px;
+            padding: 10px;
+            box-shadow: 5px 5px 13px 0 rgba(86, 194, 230, 0.9), -5px -5px 10px 0 rgba(106, 237, 255, 0.9), 5px -5px 10px 0 rgba(86, 194, 230, 0.2), -5px 5px 10px 0 rgba(86, 194, 230, 0.2), inset -1px -1px 2px 0 rgba(86, 194, 230, 0.5), inset 1px 1px 2px 0 rgba(106, 237, 255, 0.3);
+            background: #cbf9ff5d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .ligue__busts-item {
+            border-radius: 11px;
+            padding: 4px;
+            width: 45px;
+            height: 45px;
+            box-shadow: inset -1px -1px 1px 0 rgba(86, 194, 230, 0.5), inset 1px 1px 1px 0 rgba(106, 237, 255, 0.3), 3px 3px 7px 0 rgba(86, 194, 230, 0.9), -3px -3px 5px 0 rgba(106, 237, 255, 0.9), 3px -3px 5px 0 rgba(86, 194, 230, 0.2), -3px 3px 5px 0 rgba(86, 194, 230, 0.2);
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ligue__busts-coin {
+            width: 14px;
+            height: 14px;
+        }
+
+        .ligue__busts-value {
+            font-family: var(--font-family);
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 140%;
+            color: #004d94;
+        }
+
+        .ligue__link {
+            border-radius: 100px;
+            padding: 10px;
+            width: 116px;
+            height: 35px;
+            box-shadow: 5px 5px 13px 0 rgba(0, 173, 111, 0.9), -5px -5px 10px 0 rgba(0, 255, 215, 0.9), 5px -5px 10px 0 rgba(0, 173, 111, 0.2), -5px 5px 10px 0 rgba(0, 173, 111, 0.2), inset -1px -1px 2px 0 rgba(0, 173, 111, 0.5), inset 1px 1px 2px 0 rgba(0, 255, 215, 0.3);
+            background: #00ffa3;
+            font-family: "PixelSplitter", sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: #004d94;
+            text-align: center;
+        }
+    </style>
+</head>
+<div id="ligue-content">
+    <div id="ligue-upper">
+        <img id="ligue-title" src="/images/ligue-title.svg" alt="ligue">
+    </div>
+    <div class="ligue__subtitle">your legue</div>
+    <div class="ligue__wraper">
+        <button id="ligue__button-back">
+            <img src="images/arrow-back.svg" alt="">
+        </button>
+        <div class="ligue__img-cup">
+            <img src="images/cup.svg" alt="">
+        </div>
+        <button id="ligue__button-next">
+            <img src="images/arrow-next.svg" alt="">
+        </button>
+    </div>
+    <div class="ligue__value">
+        <div class="ligue__value-iner">
+            <span id="ligue__value-total">2000</span>
+            <span> / </span>
+            <span id="ligue__value-has">2000</span>
+        </div>
+    </div>
+    <div id="ligue__busts">
+        <div class="ligue__busts-item">
+            <img src="images/gun.svg" alt="gun">
+        </div>
+        <div class="ligue__busts-item">
+            <img class="ligue__busts-coin" src="images/mini-coin.svg" alt="coin">
+            <span class="ligue__busts-value">1000</span>
+        </div>
+    </div>
+    <div class="ligue__link">Claim</div>
+</div>
