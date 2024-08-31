@@ -1,4 +1,5 @@
 <head>
+
     <style>
         *,
         *:before,
@@ -20,7 +21,7 @@
         }
 
         #ligue-upper {
-            width: 100%;
+            width: 90%;
             display: flex;
             flex-direction: column;
             gap: 30px;
@@ -37,13 +38,22 @@
         }
 
         .ligue__wraper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 26px;
+            position: relative;
+            width: 90%;
+        }
+
+        .swiper {
+            width: 70%;
+        }
+
+        .ligue__img-cup img {
+            width: 100%;
         }
 
         #ligue__button-back {
+            position: absolute;
+            top: 50%;
+            left: 0;
             border: none;
             border-radius: 15px;
             width: 40px;
@@ -53,6 +63,9 @@
         }
 
         #ligue__button-next {
+            position: absolute;
+            top: 50%;
+            right: 0;
             border: none;
             border-radius: 15px;
             width: 40px;
@@ -138,19 +151,45 @@
             text-align: center;
         }
     </style>
+
+    <link href="swiper-bundle.min.css" rel="stylesheet">
 </head>
+
+
 <div id="ligue-content">
     <div id="ligue-upper">
         <img id="ligue-title" src="/images/ligue-title.svg" alt="ligue">
     </div>
     <div class="ligue__subtitle">your legue</div>
     <div class="ligue__wraper">
+        <div class="swiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <div class="ligue__img-cup">
+                        <img src="images/cup1.png" alt="">
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="ligue__img-cup">
+                        <img src="images/cup2.png" alt="">
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="ligue__img-cup">
+                        <img src="images/cup3.png" alt="">
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="ligue__img-cup">
+                        <img src="images/cup4.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
         <button id="ligue__button-back">
             <img src="images/arrow-back.svg" alt="">
         </button>
-        <div class="ligue__img-cup">
-            <img src="images/cup.svg" alt="">
-        </div>
+
         <button id="ligue__button-next">
             <img src="images/arrow-next.svg" alt="">
         </button>
@@ -173,3 +212,5 @@
     </div>
     <div class="ligue__link">Claim</div>
 </div>
+<script src="swiper-bundle.min.js"></script>
+<script src="main.js"></script>
