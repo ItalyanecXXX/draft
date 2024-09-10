@@ -1,9 +1,9 @@
 @font-face {
-    font-family: 'PixelSplitter';
-    src: local('PixelSplitter-Bold'),
-        url('PixelSplitter-Bold.woff2') format('woff2'),
-        url('PixelSplitter-Bold.woff') format('woff');
-    font-weight: bold;
+    font-family: 'PF Agora Slab Pro';
+    src: local('PFAgoraSlabPro-Medium'),
+        url('PFAgoraSlabPro-Medium.woff2') format('woff2'),
+        url('PFAgoraSlabPro-Medium.woff') format('woff');
+    font-weight: 500;
     font-style: normal;
     font-display: swap;
 }
