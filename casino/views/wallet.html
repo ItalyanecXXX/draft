@@ -106,15 +106,15 @@
       width: 100%;
     }
 
-    #settings-content {
+    #wallet-content {
       position: relative;
       z-index: 0;
       font-family: "Roboto", sans-serif;
       background-color: #000;
       width: 428px;
       height: 796px;
-      /* width: 100%;
-      height: 100%; */
+      width: 100%;
+      height: 100%;
 
       display: flex;
       flex-direction: column;
@@ -122,7 +122,7 @@
       border: none;
     }
 
-    .settings-bg::after {
+    .wallet-bg::after {
       content: "";
       position: absolute;
       top: 0;
@@ -130,60 +130,304 @@
       right: 0;
       z-index: -1;
       width: 100%;
-      height: 250px;
+      height: 29.6vh;
       background: url(../public/images/setting-bg.svg);
       background-position: 50% 50%;
       background-repeat: no-repeat;
       background-size: cover;
     }
 
-    .settings-bg {
+    .wallet-bg {
     }
 
-    .settings-title {
-      margin: 16px 0 16px;
+    .wallet-title {
+      margin: 1.9vh 0 1.9vh;
       display: flex;
-      gap: 6px;
+      gap: 0.7vh;
       align-items: center;
       justify-content: start;
-      width: 390px;
+      width: 91.2%;
     }
 
-    .settings-title-img {
-      width: 41px;
+    .wallet-title-img {
+      width: 7.2vw;
     }
 
-    .settings-title-text {
+    .wallet-title-text {
       font-weight: 500;
-      font-size: 28px;
+      font-size: 6.4vw;
       letter-spacing: 0.04em;
       color: #fff;
     }
 
-    .settings-wrapper {
-      border: 2px solid #2c2c2c;
-      border-radius: 16px;
-      width: 390px;
-      height: 743px;
-      box-shadow: 0 2px 16px 0 rgba(19, 19, 19, 0.32);
+    .wallet-wrapper {
+      border-left: 0.2vh solid #2c2c2c;
+      border-right: 0.2vh solid #2c2c2c;
+      border-radius: 1.7vh;
+      width: 91.2%;
+      height: 100%;
+      box-shadow: 0 0.2vh 1.6vh 0 rgba(19, 19, 19, 0.32);
       background: #1c1c1c;
+    }
+
+    .profil-balance {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: start;
+      border-radius: 1.7vh;
+      height: 13.1vh;
+      padding: 2.3vh;
+      box-shadow: 0 0.4vh 5vh 0 rgba(0, 0, 0, 0.25);
+      background: url("../public/images/profil/profil-balance-bg.svg");
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      background-size: cover;
+      border: 0.3vh groove #f7c243;
+    }
+
+    .profil-balance-text {
+      margin-bottom: 1.1vh;
+      font-weight: 400;
+      font-size: 3.8vw;
+      color: #fff;
+    }
+    #profil-balance-value {
+      font-weight: 700;
+      font-size: 6.2vw;
+      color: #fff;
+    }
+
+    .wallet-btns {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      height: 10.2vh;
+      border-bottom: 0.1vh solid #2c2c2c;
+      font-weight: 400;
+      font-family: "Poppins", sans-serif;
+      font-size: 1.8vh;
+      line-height: 112%;
+      color: #fff;
+      text-align: center;
+    }
+
+    #wallet-btn-rep {
+      border-radius: 1.7vh;
+      padding: 1.2vh;
+      width: 46.9%;
+
+      box-shadow: 0 0.2vh 0 0 #705438;
+      background: radial-gradient(
+          178.09% 220.16% at 94.89% -132.81%,
+          rgb(255, 122, 0) 67.58895516395569%,
+          rgb(255, 199, 0) 100%
+        ),
+        radial-gradient(
+          137.51% 118.3% at 32.95% 0%,
+          rgb(255, 137, 137) 21.246936917304993%,
+          rgb(255, 169, 106) 88.62413167953491%
+        ),
+        radial-gradient(
+          182.56% 55.34% at 5.68% 100%,
+          rgb(246, 251, 34) 0%,
+          rgb(255, 158, 69) 100%
+        ),
+        radial-gradient(
+          238.39% 44.19% at 96.59% 31.25%,
+          rgb(255, 255, 255) 0%,
+          rgb(255, 255, 255) 100%
+        );
+    }
+
+    #wallet-btn-out {
+      border-radius: 1.7vh;
+      padding: 1.2vh;
+      width: 46.9%;
+      border: 0.1vh solid #fff;
+    }
+    .wallet-history {
+      margin-top: 2.8vh;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: "Poppins", sans-serif;
+    }
+    .wallet-history-title {
+      margin-left: 5.7vw;
+      font-weight: 700;
+      font-size: 4.7vw;
+      line-height: 1;
+      color: #fff;
+    }
+    .wallet-history-desc {
+      margin-right: 5.7vw;
+      font-weight: 500;
+      font-size: 3.3vw;
+      line-height: 1.14;
+      text-decoration: underline;
+      text-decoration-skip-ink: none;
+      color: #fff;
+    }
+
+    #histori-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .histori-content-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2vh 0px;
+      width: 93.2%;
+    }
+
+    .histori-content-item:not(:last-child) {
+      border-bottom: 0.1vh solid #2c2c2c;
+    }
+
+    .histori-content-icon {
+      width: 4.7vw;
+      position: relative;
+    }
+    .histori-content-bg {
+      margin-right: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 0.6vh;
+      width: 10.5vw;
+      height: 10.5vw;
+      background: #212125;
+    }
+
+    .histori-content-text {
+      margin-right: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 0.6vh;
+    }
+    .histori-content-bank {
+      font-family: "Manrope", sans-serif;
+      font-weight: 500;
+      font-size: 2.8vw;
+      line-height: 1.33;
+      color: #fff;
+    }
+    .histori-content-status {
+      font-family: "Poppins", sans-serif;
+      font-weight: 400;
+      font-size: 3.2vw;
+      color: #6c757d;
+    }
+    .histori-content-descr {
+      display: flex;
+      flex-direction: column;
+      align-items: end;
+      justify-content: center;
+      gap: 0.6vh;
+    }
+    .histori-content-value {
+      font-family: "Poppins", sans-serif;
+      font-weight: 700;
+      font-size: 3.7vw;
+      color: #fff;
+    }
+    .histori-content-time {
+      font-family: "Poppins", sans-serif;
+      font-weight: 700;
+      font-size: 2.4vw;
+      text-align: right;
+      color: #6c757d;
     }
   </style>
 </head>
-<div id="settings-content">
-  <div class="settings-bg"></div>
-  <div class="settings-title">
-    <div class="settings-title-img">
-      <img src="../public/images/setting-icon.svg" alt="gear" />
+<div id="wallet-content">
+  <div class="wallet-bg"></div>
+  <div class="wallet-title">
+    <div class="wallet-title-img">
+      <img src="../public/images/wallet/wallet-icon.svg" alt="gear" />
     </div>
-    <span class="settings-title-text">Настройки</span>
+    <span class="wallet-title-text">Кошелёк</span>
   </div>
-  <div class="settings-wrapper">
-    <div class="settings-nik">
-      <div id="settings-nik-img">
-        <img src="../public/images/nik-img.svg" alt="" />
+  <div class="wallet-wrapper">
+    <div class="profil-balance">
+      <span class="profil-balance-text">Баланс</span>
+      <span id="profil-balance-value">252 000<span> RUB</span></span>
+    </div>
+    <div class="wallet-btns">
+      <div id="wallet-btn-rep">Пополнить</div>
+      <div id="wallet-btn-out">Вывести</div>
+    </div>
+    <div class="wallet-history">
+      <div class="wallet-history-title">История</div>
+      <div class="wallet-history-desc">Подробнее</div>
+    </div>
+    <div id="histori-content">
+      <div class="histori-content-item">
+        <div class="histori-content-bg">
+          <div class="histori-content-icon">
+            <img src="../public/images/wallet/wallet-out-icon.svg" alt="" />
+          </div>
+        </div>
+        <div class="histori-content-text">
+          <span class="histori-content-bank">Вывод на карту МИР*9398</span>
+          <span class="histori-content-status">Успешно</span>
+        </div>
+        <div class="histori-content-descr">
+          <div class="histori-content-value">50 000 RUB</div>
+          <div class="histori-content-time">Сегодня в 18:18</div>
+        </div>
       </div>
-      <span id="setting-nik-text"></span>
+      <div class="histori-content-item">
+        <div class="histori-content-bg">
+          <div class="histori-content-icon">
+            <img src="../public/images/wallet/wallet-rep-icon.svg" alt="" />
+          </div>
+        </div>
+        <div class="histori-content-text">
+          <span class="histori-content-bank">Пополнение: СБП Сбербанк</span>
+          <span class="histori-content-status">Успешно</span>
+        </div>
+        <div class="histori-content-descr">
+          <div class="histori-content-value">10 000 RUB</div>
+          <div class="histori-content-time">Сегодня в 13:00</div>
+        </div>
+      </div>
+      <div class="histori-content-item">
+        <div class="histori-content-bg">
+          <div class="histori-content-icon">
+            <img src="../public/images/wallet/wallet-out-icon.svg" alt="" />
+          </div>
+        </div>
+        <div class="histori-content-text">
+          <span class="histori-content-bank">Вывод на карту МИР*9398</span>
+          <span class="histori-content-status">Успешно</span>
+        </div>
+        <div class="histori-content-descr">
+          <div class="histori-content-value">75 000 RUB</div>
+          <div class="histori-content-time">Вчера в 15:34</div>
+        </div>
+      </div>
+      <div class="histori-content-item">
+        <div class="histori-content-bg">
+          <div class="histori-content-icon">
+            <img src="../public/images/wallet/wallet-out-icon.svg" alt="" />
+          </div>
+        </div>
+        <div class="histori-content-text">
+          <span class="histori-content-bank">Вывод на карту МИР*9398</span>
+          <span class="histori-content-status">Успешно</span>
+        </div>
+        <div class="histori-content-descr">
+          <div class="histori-content-value">250 000 RUB</div>
+          <div class="histori-content-time">22 сентября 23:00</div>
+        </div>
+      </div>
     </div>
   </div>
   <!-- ========================men========================= -->
