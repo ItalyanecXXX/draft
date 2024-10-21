@@ -130,8 +130,15 @@
     }
 
     #profile-user-bg {
-      width: 100%;
+      width: 100vw;
       height: 26.4vh;
+    }
+
+    #profile-user-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
     }
 
     .profil-wrapper {
@@ -156,6 +163,15 @@
     #profil-user-ava {
       transform: translateY(-20%);
       width: 19.6vw;
+      height: 19.6vw;
+    }
+
+    #profil-user-ava img {
+      border-radius:50% ;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
     }
 
     .profil-user-inner {
@@ -368,11 +384,11 @@
   </style>
 </head>
 <div id="profile-content">
-  <div id="profile-user-bg">
+  <div ">
     <div class="profile-bell">
       <img src="../public/images/profil/profil-bell-icon.svg" alt="beel" />
     </div>
-    <img src="../public/images/profil/profil-bg.svg" alt="" />
+    <div id="profile-user-bg"><img src="../public/images/profil/profil-bg.svg" alt="" /></div>
   </div>
   <div class="profil-wrapper">
     <div class="profil-user">
