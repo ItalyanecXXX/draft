@@ -106,8 +106,7 @@
       width: 100%;
     }
 
-    #profile-content {
-      position: relative;
+    #profile-edit-content {
       z-index: 0;
       font-family: "Roboto", sans-serif;
       background-color: #000;
@@ -122,16 +121,29 @@
       border: none;
     }
 
-    .profile-bell {
-      position: absolute;
-      top: 0.7vh;
-      right: 1.6vh;
-      width: 3.1vh;
-    }
-
     #profile-user-bg {
+      position: relative;
+
       width: 100%;
       height: 26.4vh;
+    }
+
+    #profil-edit-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 100%;
+      width: 7.1vh;
+      height: 7.1vh;
+      background-color: rgba(22, 13, 37, 0.8);
+      transform: translate(-50%, -50%);
+    }
+
+    .profile-edit-img {
+      width: 3.1vh;
     }
 
     .profil-wrapper {
@@ -154,36 +166,100 @@
     }
 
     #profil-user-ava {
+      position: relative;
       transform: translateY(-20%);
       width: 19.6vw;
     }
 
-    .profil-user-inner {
-      margin-right: auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    #profil-user-name {
-      font-weight: 400;
-      font-size: 2.6vh;
-      color: #fff;
-    }
-
-    #profil-user-nikname {
-      font-weight: 400;
-      font-size: 2.7vw;
-      color: #fff;
-    }
-
-    #profil-user-btn {
+    #profil-edit-ava {
+      position: absolute;
+      top: 50%;
+      left: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 1.1vh;
-      width: 26.3vw;
-      height: 4.2vh;
-      box-shadow: 0 0.2vh 0 0 #705438;
+      border-radius: 100%;
+      width: 9.8vw;
+      height: 9.8vw;
+      background-color: rgba(22, 13, 37, 0.8);
+      transform: translate(-50%, -50%);
+    }
+
+    .profile-ava-icon {
+      width: 4.1vw;
+    }
+
+    .edit-profil-title {
+      margin-bottom: 1.9vh;
+      font-weight: 500;
+      font-size: 4.8vw;
+      line-height: 1.4;
+      text-align: center;
+      color: #fff;
+    }
+
+    #edit-profil-container {
+      width: 91.2%;
+    }
+
+    .edit-profil-item {
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      justify-content: center;
+      margin-bottom: 2.3vh;
+    }
+
+    .edit-profil-item-title {
+      margin-bottom: 1.1vh;
+      font-weight: 500;
+      font-size: 3.3vw;
+      line-height: 1.2;
+      color: #fff;
+    }
+
+    .edit-profil-inp {
+      padding: 2.2vh 5vw;
+      border-radius: 1.7vh;
+      width: 100%;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      font-family: "Manrope", sans-serif;
+      font-weight: 400;
+      font-size: 3.3vw;
+      line-height: 1.2;
+      color: #fff;
+    }
+
+    .edit-profil-inp::placeholder {
+    }
+
+    .edit-profil-item-text {
+      display: flex;
+      align-items: center;
+      justify-content: end;
+      margin-top: 6px;
+      width: 100%;
+      font-weight: 400;
+      font-family: "Manrope", sans-serif;
+      font-size: 3.3vw;
+      line-height: 1.2;
+      color: #b0aeb8;
+    }
+
+    #edit-profil-btn-save {
+      margin: 1.9vh 0 2.3vh;
+      padding: 2.2vh 0;
+      width: 100%;
+      border: none;
+      border-radius: 1.4vh;
+      font-weight: 500;
+      font-size: 4.3vw;
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 3px 0 0 #705438;
       background: radial-gradient(
           178.09% 220.16% at 94.89% -132.81%,
           rgb(255, 122, 0) 67.58895516395569%,
@@ -204,173 +280,30 @@
           rgb(255, 255, 255) 0%,
           rgb(255, 255, 255) 100%
         );
-      font-weight: 400;
-      font-size: 2.7vw;
-      color: #fff;
     }
-    .profil-balance {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: start;
-      margin-bottom: 2.3vh;
-      border-radius: 1.7vh;
-      width: 91.2%;
-      height: 13.1vh;
-      padding: 2.3vh;
-      box-shadow: 0 0.4vh 5vh 0 rgba(0, 0, 0, 0.25);
-      background: url("../public/images/profil/profil-balance-bg.svg");
-      background-position: 50% 50%;
-      background-repeat: no-repeat;
-      background-size: cover;
-      border: 0.3vh groove #f7c243;
-    }
-
-    .profil-balance-text {
-      font-weight: 400;
-      font-size: 2.7vw;
-      color: #fff;
-    }
-
-    #profil-balance-value {
-      font-weight: 700;
-      font-size: 6.2vw;
-      color: #fff;
-    }
-
-    .profil-referrals {
-      margin-bottom: 2.4vh;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 91.2%;
-      height: 7vh;
-      padding: 0 2.4vh 0 2.4vh;
-    }
-
-    .profil-referrals::before {
-      content: "";
-      position: absolute;
-      left: 40%;
-      border-radius: 1vh;
-      width: 0.1vh;
-      height: 3.4vh;
-      background: linear-gradient(
-        180deg,
-        rgba(217, 217, 217, 0.1) 19.79%,
-        #6977fa 55.73%,
-        rgba(217, 217, 217, 0.1) 77.6%
-      );
-      opacity: 0.5;
-    }
-
-    .profil-referrals-total {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .referrals-total-text {
-      font-weight: 400;
-      font-size: 2.7vw;
-      color: #fff;
-    }
-
-    .profil-referrals-coints {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #referrals-total-value {
-      font-weight: 600;
-      font-size: 6.2vw;
-      color: #fff;
-    }
-    #referrals-total-coints {
-      font-weight: 600;
-      font-size: 6.2vw;
-      color: #fff;
-    }
-
-    .profil-tabs {
-      margin-bottom: 2.4vh;
-      display: flex;
-      align-items: center;
-      justify-content: start;
-      gap: 5vh;
-      width: 91.2%;
-      border-bottom: 0.2vh solid #31313193;
-    }
-
-    .profil-tab {
-      font-weight: 500;
-      font-size: 2.7vw;
-      color: rgba(255, 255, 255, 0.25);
-      padding-bottom: 0.7vh;
-    }
-
-    .profil-tab-activ {
-      position: relative;
-      font-weight: 600;
-      font-size: 2.7vw;
-      color: #fff;
-    }
-
-    .profil-tab-activ::before {
-      content: "";
-      position: absolute;
-      bottom: -1;
-      right: 0;
-      left: 0;
-      border-radius: 0.4vh;
-      height: 0.2vh;
-      background: #ffffff80;
-    }
-
-    #profil-info-content {
-      width: 91.2%;
-      padding-bottom: 10vh;
-    }
-
-    .profil-info-item {
-      margin-bottom: 2.4vh;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-radius: 0.4vh;
+    #edit-profil-btn-Cancel {
+      padding: 2.2vh 0;
       width: 100%;
-      height: 6.7vh;
-      background: #2c2c2c;
-    }
-
-    .profil-info-inner {
-      margin-left: 1.8vh;
-    }
-    .profil-info-text {
-      margin-bottom: 0.4vh;
-      font-weight: 600;
-      font-size: 1.9vh;
+      border: none;
+      font-weight: 500;
+      font-size: 4.3vw;
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      text-align: center;
       color: #fff;
-    }
-    .profil-info-descr {
-      font-weight: 400;
-      font-size: 2.3vw;
-      color: rgba(255, 255, 255, 0.25);
-    }
-    .profil-info-errow {
-      margin-right: 1.8vh;
-      width: 1.4vh;
+      background-color: transparent;
     }
   </style>
 </head>
-<div id="profile-content">
+<div id="profile-edit-content">
   <div id="profile-user-bg">
-    <div class="profile-bell">
-      <img src="../public/images/profil/profil-bell-icon.svg" alt="beel" />
+    <div id="profil-edit-bg">
+      <div class="profile-edit-img">
+        <img
+          src="../public/images/profil/edit-bg-icon.svg"
+          alt="photo camera"
+        />
+      </div>
     </div>
     <img src="../public/images/profil/profil-bg.svg" alt="" />
   </div>
@@ -378,61 +311,51 @@
     <div class="profil-user">
       <div id="profil-user-ava">
         <img src="../public/images/nik-img.svg" alt="avatar" />
-      </div>
-      <div class="profil-user-inner">
-        <span id="profil-user-name">NickName</span>
-        <span id="profil-user-nikname">@nickname</span>
-      </div>
-      <div id="profil-user-btn">Редактировать</div>
-    </div>
-    <div class="profil-balance">
-      <span class="profil-balance-text">Баланс</span>
-      <span id="profil-balance-value">252 000<span> RUB</span></span>
-    </div>
-    <div class="profil-referrals">
-      <div class="profil-referrals-total">
-        <span id="referrals-total-value">200</span>
-        <span class="referrals-total-text">Всего рефералов</span>
-      </div>
-      <div class="profil-referrals-coints">
-        <span id="referrals-total-coints">1 000 000 <span> RUB</span></span>
-        <span class="referrals-total-text">Всего заработано</span>
-      </div>
-    </div>
-    <div class="profil-tabs">
-      <div class="profil-tab profil-tab-activ">Информация</div>
-      <div class="profil-tab">Мои рефералы</div>
-      <div class="profil-tab">Награды</div>
-    </div>
-    <div id="profil-info-content">
-      <div class="profil-info-item">
-        <div class="profil-info-inner">
-          <div class="profil-info-text">Правила игры</div>
-          <span class="profil-info-descr"
-            >Изучите подробнее правила игры, это поможет вам выигрывать</span
-          >
-        </div>
-        <div class="profil-info-errow">
-          <img src="../public/images/profil/profil-arrouw.svg" alt="arrouw" />
-        </div>
-      </div>
-      <div class="profil-info-item">
-        <div class="profil-info-inner">
-          <div class="profil-info-text">Политика конденциальности</div>
-        </div>
-        <div class="profil-info-errow">
-          <img src="../public/images/profil/profil-arrouw.svg" alt="arrouw" />
-        </div>
-      </div>
-      <div class="profil-info-item">
-        <div class="profil-info-inner">
-          <div class="profil-info-text">Условия и положения</div>
-        </div>
-        <div class="profil-info-errow">
-          <img src="../public/images/profil/profil-arrouw.svg" alt="arrouw" />
+        <div id="profil-edit-ava">
+          <div class="profile-ava-icon">
+            <img
+              src="../public/images/profil/edit-bg-icon.svg"
+              alt="photo camera"
+            />
+          </div>
         </div>
       </div>
     </div>
+    <span class="edit-profil-title">Редактировать профиль</span>
+    <form id="edit-profil-container" action="">
+      <label class="edit-profil-item">
+        <span class="edit-profil-item-title">Имя</span>
+        <input
+          id="profile-nikname"
+          class="edit-profil-inp"
+          type="text"
+          placeholder="NickName"
+        />
+        <div class="edit-profil-item-text">
+          <span id="profile-nikname-value">12</span>
+          <span> /</span>
+          <span id="profile-nikname-total">20</span>
+        </div>
+      </label>
+      <label class="edit-profil-item">
+        <span class="edit-profil-item-title">Имя пользователя</span>
+        <input
+          id="profile-name"
+          class="edit-profil-inp"
+          type="text"
+          placeholder="@nickname"
+        />
+        <div class="edit-profil-item-text">
+          <span id="profile-name-value">13</span>
+          <span> /</span>
+          <span id="profile-name-total">20</span>
+        </div>
+      </label>
+      <button type="submit" id="edit-profil-btn-save">
+        Сохранить изменения
+      </button>
+      <button type="reset" id="edit-profil-btn-Cancel">Отменить</button>
+    </form>
   </div>
 
   <!-- ========================men========================= -->
