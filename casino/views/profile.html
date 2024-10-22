@@ -108,18 +108,17 @@
 
     #profile-content {
       position: relative;
-      z-index: 0;
-      font-family: "Roboto", sans-serif;
-      background-color: #000;
-      width: 428px;
-      height: 796px;
-      width: 100%;
-      height: 100%;
-
+      /* z-index: 0; */
       display: flex;
       flex-direction: column;
       align-items: center;
       border: none;
+      font-family: "Roboto", sans-serif;
+      background-color: #000;
+      /* width: 428px;
+      height: 796px; */
+      width: 100%;
+      height: 100%;
     }
 
     .profile-bell {
@@ -167,7 +166,7 @@
     }
 
     #profil-user-ava img {
-      border-radius:50% ;
+      border-radius: 50%;
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -224,6 +223,7 @@
       font-size: 2.7vw;
       color: #fff;
     }
+
     .profil-balance {
       display: flex;
       flex-direction: column;
@@ -306,6 +306,7 @@
       font-size: 6.2vw;
       color: #fff;
     }
+
     #referrals-total-coints {
       font-weight: 600;
       font-size: 6.2vw;
@@ -366,87 +367,143 @@
     .profil-info-inner {
       margin-left: 1.8vh;
     }
+
     .profil-info-text {
       margin-bottom: 0.4vh;
       font-weight: 600;
       font-size: 1.9vh;
       color: #fff;
     }
+
     .profil-info-descr {
       font-weight: 400;
       font-size: 2.3vw;
       color: rgba(255, 255, 255, 0.25);
     }
+
     .profil-info-errow {
       margin-right: 1.8vh;
       width: 1.4vh;
+    }
+
+    .profil-info-item-support {
+      margin-bottom: 2.4vh;
+      display: flex;
+      align-items: center;
+      gap: 2vw;
+      border-radius: 0.4vh;
+      width: 100%;
+      height: 6.7vh;
+      background: #2c2c2c;
+    }
+
+    .profil-info-letter {
+      margin-left: 1.8vh;
+      width: 8.4vw;
+    }
+
+    .profil-info-support {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profil-info-support-title {
+      font-family: "Rubik", sans-serif;
+      font-weight: 500;
+      font-size: 2.9vw;
+      line-height: 1.4;
+      letter-spacing: 0.03em;
+      color: #959595;
+    }
+
+    .profil-info-support-link {
+      cursor: auto;
+      text-decoration: none;
+      font-family: "Rubik", sans-serif;
+      font-weight: 400;
+      font-size: 3.3vw;
+      line-height: 1.4;
+      letter-spacing: 0.02em;
+      color: #fff;
     }
   </style>
 </head>
 <div id="profile-content">
   <div ">
-    <div class="profile-bell">
-      <img src="../public/images/profil/profil-bell-icon.svg" alt="beel" />
-    </div>
-    <div id="profile-user-bg"><img src="../public/images/profil/profil-bg.svg" alt="" /></div>
+  <div class="profile-bell">
+    <img src="../public/images/profil/profil-bell-icon.svg" alt="beel" />
   </div>
-  <div class="profil-wrapper">
-    <div class="profil-user">
-      <div id="profil-user-ava">
-        <img src="../public/images/nik-img.svg" alt="avatar" />
-      </div>
-      <div class="profil-user-inner">
-        <span id="profil-user-name">NickName</span>
-        <span id="profil-user-nikname">@nickname</span>
-      </div>
-      <div id="profil-user-btn">Редактировать</div>
+  <div id="profile-user-bg">
+    <img src="../public/images/profil/profil-bg.svg" alt="" />
+  </div>
+</div>
+<div class="profil-wrapper">
+  <div class="profil-user">
+    <div id="profil-user-ava">
+      <img src="../public/images/nik-img.svg" alt="avatar" />
     </div>
-    <div class="profil-balance">
-      <span class="profil-balance-text">Баланс</span>
-      <span id="profil-balance-value">252 000<span> RUB</span></span>
+    <div class="profil-user-inner">
+      <span id="profil-user-name">NickName</span>
+      <span id="profil-user-nikname">@nickname</span>
     </div>
-    <div class="profil-referrals">
-      <div class="profil-referrals-total">
-        <span id="referrals-total-value">200</span>
-        <span class="referrals-total-text">Всего рефералов</span>
+    <div id="profil-user-btn">Редактировать</div>
+  </div>
+  <div class="profil-balance">
+    <span class="profil-balance-text">Баланс</span>
+    <span id="profil-balance-value">252 000<span> RUB</span></span>
+  </div>
+  <div class="profil-referrals">
+    <div class="profil-referrals-total">
+      <span id="referrals-total-value">200</span>
+      <span class="referrals-total-text">Всего рефералов</span>
+    </div>
+    <div class="profil-referrals-coints">
+      <span id="referrals-total-coints">1 000 000 <span> RUB</span></span>
+      <span class="referrals-total-text">Всего заработано</span>
+    </div>
+  </div>
+  <div class="profil-tabs">
+    <div class="profil-tab profil-tab-activ">Информация</div>
+    <div class="profil-tab">Мои рефералы</div>
+    <div class="profil-tab">Награды</div>
+  </div>
+  <div id="profil-info-content">
+    <div class="profil-info-item">
+      <div class="profil-info-inner">
+        <div class="profil-info-text">Правила игры</div>
+        <span class="profil-info-descr"
+          >Изучите подробнее правила игры, это поможет вам выигрывать</span
+        >
       </div>
-      <div class="profil-referrals-coints">
-        <span id="referrals-total-coints">1 000 000 <span> RUB</span></span>
-        <span class="referrals-total-text">Всего заработано</span>
+      <div class="profil-info-errow">
+        <img src="../public/images/profil/profil-arrouw.svg" alt="arrouw" />
       </div>
     </div>
-    <div class="profil-tabs">
-      <div class="profil-tab profil-tab-activ">Информация</div>
-      <div class="profil-tab">Мои рефералы</div>
-      <div class="profil-tab">Награды</div>
+    <div class="profil-info-item">
+      <div class="profil-info-inner">
+        <div class="profil-info-text">Политика конденциальности</div>
+      </div>
+      <div class="profil-info-errow">
+        <img src="../public/images/profil/profil-arrouw.svg" alt="arrouw" />
+      </div>
     </div>
-    <div id="profil-info-content">
-      <div class="profil-info-item">
-        <div class="profil-info-inner">
-          <div class="profil-info-text">Правила игры</div>
-          <span class="profil-info-descr"
-            >Изучите подробнее правила игры, это поможет вам выигрывать</span
-          >
-        </div>
-        <div class="profil-info-errow">
-          <img src="../public/images/profil/profil-arrouw.svg" alt="arrouw" />
-        </div>
+    <div class="profil-info-item">
+      <div class="profil-info-inner">
+        <div class="profil-info-text">Условия и положения</div>
       </div>
-      <div class="profil-info-item">
-        <div class="profil-info-inner">
-          <div class="profil-info-text">Политика конденциальности</div>
-        </div>
-        <div class="profil-info-errow">
-          <img src="../public/images/profil/profil-arrouw.svg" alt="arrouw" />
-        </div>
+      <div class="profil-info-errow">
+        <img src="../public/images/profil/profil-arrouw.svg" alt="arrouw" />
       </div>
-      <div class="profil-info-item">
-        <div class="profil-info-inner">
-          <div class="profil-info-text">Условия и положения</div>
-        </div>
-        <div class="profil-info-errow">
-          <img src="../public/images/profil/profil-arrouw.svg" alt="arrouw" />
-        </div>
+    </div>
+    <div class="profil-info-item-support">
+      <div class="profil-info-letter">
+        <img src="../public/images/profil/letter-icon.svg" alt="letter" />
+      </div>
+      <div class="profil-info-support">
+        <span class="profil-info-support-title">Поддержка</span>
+        <a class="profil-info-support-link" href="mailto:support@mrcash.com"
+          >support@mrcash.com</a
+        >
       </div>
     </div>
   </div>
