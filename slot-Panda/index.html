@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
+    <style>
+      html,
+      body {
+        font-size: 100%;
+        line-height: 1;
+        -ms-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+      }
+      *,
+      *:before,
+      *:after {
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+      :focus,
+      :active {
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      /* ================================================ */
+
+      html {
+        height: 100dvh;
+        overflow: hidden;
+      }
+
+      body {
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin: auto;
+      }
+      /* ======================================== */
+      body {
+        margin: 0;
+        font-family: "Roboto", sans-serif;
+        /* width: 428px;
+              height: 767px; */
+      }
+
+      canvas {
+        width: 100%;
+        height: 100%;
+      }
+
+      img {
+        width: 100%;
+      }
+
+      @font-face {
+        font-family: "Roboto";
+        src: url("./fonts/Roboto-Bold.ttf") format("truetype");
+        font-weight: 700;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "Roboto";
+        src: url("./fonts/Roboto-Medium.ttf") format("truetype");
+        font-weight: 500;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "Roboto";
+        src: url("./fonts/Roboto-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+
+      .img-close {
+        position: absolute;
+        top: 4.5vw;
+        right: 4.5vw;
+        width: 5.5vw;
+      }
+
+      #modal-setting {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        justify-content: center;
+        background-color: #000000e6;
+        border-radius: 10px;
+        padding: 5.2vh 0 2.6vh 0;
+        width: 98%;
+      }
+
+      .container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        /* width: 87%; */
+        width: 83%;
+        margin: 0 auto;
+      }
+
+      .setting-title {
+        font-weight: 400;
+        font-size: 4.7vw;
+        text-align: center;
+        background: linear-gradient(158deg, #f7c243 0%, #fd902b 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        padding-bottom: 2.6vh;
+      }
+
+      .setting-hiro {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        justify-content: center;
+        padding: 2.6vh 0 0 0;
+        border-bottom: 0.1vh solid #2c2c2c;
+        border-top: 0.1vh solid #2c2c2c;
+      }
+
+      .setting-subtitle {
+        font-weight: 400;
+        font-size: 4.7vw;
+        margin-bottom: 2.6vh;
+        background: linear-gradient(158deg, #f7c243 0%, #fd902b 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .setting-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 9.4vw;
+        margin-bottom: 2.6vh;
+        width: 100%;
+      }
+
+      .setting-text-title {
+        display: block;
+        margin-bottom: 1.3vh;
+        font-weight: 400;
+        font-size: 4.7vw;
+        color: #fff;
+      }
+
+      .setting-text-descr {
+        display: block;
+        font-weight: 400;
+        font-size: 3.5vw;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      .setting-bet {
+        margin-top: 2.6vh;
+        width: 100%;
+      }
+
+      .bet-title {
+        display: block;
+        margin-bottom: 2vh;
+        text-align: left;
+        font-weight: 400;
+        font-size: 4.7vw;
+        background: linear-gradient(158deg, #f7c243 0%, #fd902b 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .bet-text {
+        display: block;
+        margin-bottom: 2.6vh;
+        font-weight: 400;
+        font-size: 4.7vw;
+        text-align: center;
+        color: #fff;
+      }
+
+      .setting-bet-inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3.5vw;
+        margin-bottom: 2.6vh;
+      }
+
+      .img-bet-less {
+        border-radius: 10vh;
+        padding: 1vw;
+        width: 8.5vw;
+        height: 8.5vw;
+        background: #2c2c2c;
+      }
+
+      .bet-meaning {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 0.1vh solid #2c2c2c;
+        border-radius: 1vw;
+        width: 26vw;
+        height: 11.7vw;
+        background: #1c1f24;
+        font-weight: 700;
+        font-size: 3.8vw;
+        text-align: center;
+        color: #fff;
+      }
+
+      .img-bet-more {
+        border-radius: 10vh;
+        padding: 1vw;
+        width: 8.5vw;
+        height: 8.5vw;
+        background: linear-gradient(158deg, #f7c243 0%, #fd902b 100%);
+      }
+
+      .settings-switcher {
+        margin-right: 5.7vw;
+        display: block;
+        position: relative;
+        border-radius: 2vh;
+        padding: 0.2vh;
+        width: 6.6vh;
+        height: 3.4vh;
+        background: rgba(255, 255, 255, 0.5);
+        transition: background-color 0.6s ease-in-out;
+      }
+
+      .settings-switcher::before {
+        content: "";
+        position: absolute;
+        top: 0.4vh;
+        left: 0.4vh;
+        display: inline-block;
+        border-radius: 50%;
+        width: 2.6vh;
+        height: 2.6vh;
+        background-color: #fff;
+        transition: left 0.4s ease-in-out;
+      }
+
+      .settings-switcher-checkbox {
+        appearance: none;
+      }
+
+      .settings-switcher:has(.settings-switcher-checkbox:checked)::before {
+        left: 3.4vh;
+      }
+
+      .settings-switcher:has(.settings-switcher-checkbox:checked) {
+        background: radial-gradient(
+            178.09% 220.16% at 94.89% -132.81%,
+            rgb(255, 122, 0) 67.58895516395569%,
+            rgb(255, 199, 0) 100%
+          ),
+          radial-gradient(
+            137.51% 118.3% at 32.95% 0%,
+            rgb(255, 137, 137) 21.246936917304993%,
+            rgb(255, 169, 106) 88.62413167953491%
+          ),
+          radial-gradient(
+            182.56% 55.34% at 5.68% 100%,
+            rgb(246, 251, 34) 0%,
+            rgb(255, 158, 69) 100%
+          ),
+          radial-gradient(
+            238.39% 44.19% at 96.59% 31.25%,
+            rgb(255, 255, 255) 0%,
+            rgb(255, 255, 255) 100%
+          );
+      }
+
+      #modal-autoplay {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        justify-content: center;
+        background-color: #000000e6;
+        border-radius: 2.4vw;
+        padding: 5.2vh 0;
+        width: 98%;
+        background: #000000e6;
+      }
+
+      .title-autopay {
+        margin-bottom: 2.6vh;
+        font-weight: 400;
+        font-size: 4.7vw;
+        text-align: center;
+        background: linear-gradient(158deg, #f7c243 0%, #fd902b 100%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .inner-autoplay {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9.3vw 9.3vw;
+        padding: 2.6vh 0;
+        border-top: 0.1vh solid #2c2c2c;
+        border-bottom: 0.1vh solid #2c2c2c;
+      }
+
+      .label-autoplay {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 4vw;
+        line-height: 1.43;
+        letter-spacing: -0.01em;
+        color: #fff;
+        width: 43.8%;
+      }
+
+      .input-autoplay {
+        appearance: none;
+      }
+
+      .custom-checkbox {
+        display: inline-block;
+        position: relative;
+        flex-shrink: 0;
+        margin-right: 2.4vw;
+        border-radius: 1.2vw;
+        width: 4.7vw;
+        height: 4.7vw;
+        background: linear-gradient(158deg, #f7c243 0%, #fd902b 100%);
+      }
+
+      .custom-checkbox:has(.input-autoplay:checked)::before {
+        content: "";
+        display: inline-block;
+        position: absolute;
+        width: 3vw;
+        height: 2.3vw;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: url(./images/interface/checkbox-chec.svg) 50% 50% / 100%
+          no-repeat;
+      }
+
+      .descr-autoplay {
+        margin: 2.6vh 0 2vh 0;
+        font-weight: 400;
+        font-size: 4.7vw;
+        color: #fff;
+      }
+
+      .slidecontainer-autoplay {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6.5vh;
+        width: 100%;
+      }
+
+      #autoplay-demo {
+        font-weight: 700;
+        font-size: 4.7vw;
+        color: #fff;
+      }
+
+      .autoplay-btn {
+        border-radius: 1.7vh;
+        padding: 1.6vh;
+        width: 100%;
+        box-shadow: 0 0.3vh 0 0 #705438;
+        background: radial-gradient(
+            178.09% 220.16% at 94.89% -132.81%,
+            rgb(255, 122, 0) 67.58895516395569%,
+            rgb(255, 199, 0) 100%
+          ),
+          radial-gradient(
+            137.51% 118.3% at 32.95% 0%,
+            rgb(255, 137, 137) 21.246936917304993%,
+            rgb(255, 169, 106) 88.62413167953491%
+          ),
+          radial-gradient(
+            182.56% 55.34% at 5.68% 100%,
+            rgb(246, 251, 34) 0%,
+            rgb(255, 158, 69) 100%
+          ),
+          radial-gradient(
+            238.39% 44.19% at 96.59% 31.25%,
+            rgb(255, 255, 255) 0%,
+            rgb(255, 255, 255) 100%
+          );
+        font-weight: 500;
+        font-size: 4.2vw;
+        line-height: 1.5;
+        letter-spacing: 0.02em;
+        text-align: center;
+        color: #fff;
+      }
+
+      .blockrange {
+        width: 64vw;
+      }
+
+      .range {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        cursor: pointer;
+        outline: none;
+        border-radius: 2vh;
+        height: 0.7vh;
+        background: #f2f2f2;
+      }
+
+      .range::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 2.1vh;
+        width: 2.1vh;
+        background-color: #f2f2f2;
+        border-radius: 50%;
+        border: none;
+        transition: 0.2s ease-in-out;
+      }
+
+      .range::-moz-range-thumb {
+        height: 2.1vh;
+        width: 2.1vh;
+        background-color: #f2f2f2;
+        border-radius: 50%;
+        border: none;
+      }
+
+      #modal-bet {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        justify-content: center;
+        background-color: #000000e6;
+        border-radius: 2.4vw;
+        padding: 5.2vh 0;
+        width: 98%;
+        background: #000000e6;
+      }
+
+      .bet-border {
+        display: block;
+        padding-bottom: 2.6vh;
+        width: 100%;
+        border-bottom: 0.1vh solid #2c2c2c;
+      }
+
+      #modal-rules {
+        display: none;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        justify-content: center;
+        background-color: #000000e6;
+        border-radius: 2.4vw;
+        padding: 5.2vh 0;
+        width: 98%;
+        background: #000000e6;
+      }
+
+      .rules-text {
+        font-weight: 400;
+        font-size: 4.7vw;
+        text-align: center;
+        color: #fff;
+      }
+      /* ============menu================ */
+      .game-menu {
+        display: none;
+        /* display: flex; */
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.1vh 3.8vw;
+        width: 100%;
+        background: #28212b;
+      }
+
+      .game-menu-back {
+        display: flex;
+        align-items: center;
+        font-weight: 400;
+        font-size: 3.2vw;
+        line-height: 2.29;
+        letter-spacing: 0.04em;
+        text-align: center;
+        color: #fff;
+      }
+
+      .game-menu-wrapper {
+        display: flex;
+        font-weight: 400;
+        font-size: 3vw;
+        line-height: 2.67;
+        letter-spacing: 0.04em;
+        text-align: center;
+        color: #fff;
+      }
+
+      .game-menu-arround {
+        margin-right: 3.3vw;
+        width: 2.4vw;
+        height: 5.2vw;
+      }
+
+      .game-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2.4vw;
+        margin-left: 2.4vw;
+        border-radius: 3vw;
+        padding: 0px 2.4vw;
+        background: radial-gradient(
+            178.09% 220.16% at 94.89% -132.81%,
+            rgb(255, 122, 0) 67.58895516395569%,
+            rgb(255, 199, 0) 100%
+          ),
+          radial-gradient(
+            137.51% 118.3% at 32.95% 0%,
+            rgb(255, 137, 137) 21.246936917304993%,
+            rgb(255, 169, 106) 88.62413167953491%
+          ),
+          radial-gradient(
+            182.56% 55.34% at 5.68% 100%,
+            rgb(246, 251, 34) 0%,
+            rgb(255, 158, 69) 100%
+          ),
+          radial-gradient(
+            238.39% 44.19% at 96.59% 31.25%,
+            rgb(255, 255, 255) 0%,
+            rgb(255, 255, 255) 100%
+          );
+      }
+
+      .game-menu-icon {
+        width: 5.6vw;
+        height: 5.6vw;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="modal-setting">
+      <div class="img-close" id="modal-setting-close">
+        <img src="./images/interface/closes.svg" alt="" />
+      </div>
+      <div class="container">
+        <span class="setting-title">Настройка системы</span>
+        <div class="setting-hiro">
+          <span class="setting-subtitle">Основные настройки</span>
+          <div class="setting-inner">
+            <div class="setting-text">
+              <span class="setting-text-title">Быстрая игра</span>
+              <span class="setting-text-descr"
+                >Играть быстрее, уменьшив общее время спина</span
+              >
+            </div>
+            <div class="setting-toggle">
+              <label>
+                <span class="settings-switcher">
+                  <input
+                    class="settings-switcher-checkbox"
+                    type="checkbox"
+                    data-price="swticher"
+                  />
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="setting-inner">
+            <div class="setting-text">
+              <span class="setting-text-title">Фоновая музыка</span>
+              <span class="setting-text-descr">Выкл. или Вкл. звук</span>
+            </div>
+            <div class="setting-toggle">
+              <label>
+                <span class="settings-switcher">
+                  <input
+                    class="settings-switcher-checkbox"
+                    type="checkbox"
+                    data-price="swticher"
+                  />
+                </span>
+              </label>
+            </div>
+          </div>
+          <div class="setting-inner">
+            <div class="setting-text">
+              <span class="setting-text-title">Блокировка кнопки спина</span>
+              <span class="setting-text-descr"
+                >Разблокируйте, чтоб разместить кнопку в любом месте
+                экрана</span
+              >
+            </div>
+            <div class="setting-toggle">
+              <label>
+                <span class="settings-switcher">
+                  <input
+                    class="settings-switcher-checkbox"
+                    type="checkbox"
+                    data-price="swticher"
+                  />
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="setting-bet">
+          <span class="bet-title">Настройки ставок</span>
+          <span class="bet-text">Общая ставка</span>
+          <div class="setting-bet-inner">
+            <div class="img-bet-less">
+              <img src="./images/interface/less.svg" alt="" />
+            </div>
+            <div class="bet-meaning">20,00₽</div>
+            <div class="img-bet-more">
+              <img src="./images/interface/more.svg" alt="" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="modal-autoplay">
+      <div class="img-close" id="modal-autoplay-close">
+        <img src="./images/interface/closes.svg" alt="" />
+      </div>
+      <div class="container">
+        <span class="title-autopay">Настройка автоматической игры</span>
+        <div class="inner-autoplay">
+          <label class="label-autoplay">
+            <span class="custom-checkbox">
+              <input class="input-autoplay" type="checkbox" />
+            </span>
+            Турбо-спин
+          </label>
+          <label class="label-autoplay">
+            <span class="custom-checkbox">
+              <input class="input-autoplay" type="checkbox" />
+            </span>
+            Быстрая игра
+          </label>
+          <label class="label-autoplay">
+            <span class="custom-checkbox">
+              <input class="input-autoplay" type="checkbox" />
+            </span>
+            Не показывать экраны
+          </label>
+        </div>
+        <span class="descr-autoplay">Количество автоматических спинов</span>
+        <div class="slidecontainer-autoplay">
+          <div class="blockrange">
+            <input
+              type="range"
+              min="1"
+              max="100"
+              value="1"
+              step="1"
+              class="range"
+              id="range"
+            />
+          </div>
+          <span id="autoplay-demo">1</span>
+        </div>
+        <div class="autoplay-btn" id="autoplay-btn">
+          <span>Начать автоигру </span>
+          <span id="autoplay-btn-value">(1)</span>
+        </div>
+      </div>
+    </div>
+    <div id="modal-bet">
+      <div class="img-close" id="modal-bet-close">
+        <img src="./images/interface/closes.svg" alt="" />
+      </div>
+      <div class="container">
+        <span class="title-autopay bet-border">Множитель ставки</span>
+        <span class="bet-text">Ставка</span>
+        <div class="setting-bet-inner">
+          <div class="img-bet-less">
+            <img src="./images/interface/less.svg" alt="" />
+          </div>
+          <div class="bet-meaning">1</div>
+          <div class="img-bet-more">
+            <img src="./images/interface/more.svg" alt="" />
+          </div>
+        </div>
+        <span class="bet-text">Номинал монеты</span>
+        <div class="setting-bet-inner">
+          <div class="img-bet-less">
+            <img src="./images/interface/less.svg" alt="" />
+          </div>
+          <div class="bet-meaning">1,00₽</div>
+          <div class="img-bet-more">
+            <img src="./images/interface/more.svg" alt="" />
+          </div>
+        </div>
+        <span class="bet-text">Общая ставка</span>
+        <div class="setting-bet-inner">
+          <div class="img-bet-less">
+            <img src="./images/interface/less.svg" alt="" />
+          </div>
+          <div class="bet-meaning">20,00₽</div>
+          <div class="img-bet-more">
+            <img src="./images/interface/more.svg" alt="" />
+          </div>
+        </div>
+        <div class="autoplay-btn">
+          <span>Максимальная ставка</span>
+        </div>
+      </div>
+    </div>
+    <div id="modal-rules">
+      <div class="img-close" id="modal-rules-close">
+        <img src="./images/interface/closes.svg" alt="" />
+      </div>
+      <div class="container">
+        <span class="title-autopay bet-border">Правила игры</span>
+        <div class="rules-text">Текст</div>
+      </div>
+    </div>
+    <div class="game-menu">
+      <div class="game-menu-back">
+        <div class="game-menu-arround">
+          <img src="./images/game-menu/arround.svg" alt="" />
+        </div>
+        <span>Назад в лобби</span>
+      </div>
+      <div class="game-menu-wrapper">
+        <span id="wallet-value">0 ₽</span>
+        <div class="game-menu-btn">
+          <div class="game-menu-icon">
+            <img src="./images/game-menu/icons-wallet.svg" alt="" />
+          </div>
+          <span>Пополнить</span>
+        </div>
+      </div>
+    </div>
+    <script>
+      const app = new PIXI.Application({
+        width: screen.width,
+        height: screen.height,
+      });
+      document.body.appendChild(app.view);
+
+      // =====================screen loader=================================
+      const loadingBackground = PIXI.Sprite.from(
+        "./images/interface/loading-background.png"
+      );
+      loadingBackground.width = app.screen.width;
+      loadingBackground.height = app.screen.height;
+      app.stage.addChild(loadingBackground);
+      const loadingPanda = PIXI.Sprite.from(
+        "./images/interface/panda-preview.png"
+      );
+      loadingPanda.y = app.screen.height * 0.75;
+      loadingPanda.x = app.screen.width * 0.65;
+      loadingPanda.scale.set(1);
+      app.stage.addChild(loadingPanda);
+
+      // Width and height of the loading scale
+      const barWidth = 300;
+      const barHeight = 20;
+
+      //Background for the loading scale
+      const loadingBarBackground = new PIXI.Graphics();
+      loadingBarBackground.beginFill(0xecc76e);
+      loadingBarBackground.drawRoundedRect(0, 0, barWidth, barHeight, 10);
+      loadingBarBackground.endFill();
+      loadingBarBackground.x = (app.screen.width - barWidth) / 2;
+      loadingBarBackground.y = app.screen.height * 0.725;
+      app.stage.addChild(loadingBarBackground);
+
+      // Download Lane
+      const loadingBar = new PIXI.Graphics();
+      loadingBar.beginFill(0xfd902b);
+      loadingBar.drawRoundedRect(0, 0, 1, barHeight, 10);
+      loadingBar.endFill();
+      loadingBar.x = loadingBarBackground.x;
+      loadingBar.y = loadingBarBackground.y;
+      app.stage.addChild(loadingBar);
+
+      // Creating a "Continue" button
+      const continueButton = PIXI.Sprite.from("./images/interface/start.png");
+      continueButton.interactive = true;
+      continueButton.buttonMode = true;
+      continueButton.anchor.set(0.5);
+      continueButton.x = app.screen.width / 2;
+      continueButton.y = app.screen.height * 0.9;
+      continueButton.scale.set(0.1);
+      continueButton.visible = false; // Hiding the button until the download is complete
+      app.stage.addChild(continueButton);
+
+      continueButton.on("pointerdown", () => {
+        app.stage.removeChild(loadingBackground);
+        app.stage.removeChild(loadingBarBackground);
+        app.stage.removeChild(loadingBar);
+        app.stage.removeChild(continueButton);
+
+        // Launching the main application
+        startGame();
+      });
+
+      // Function for updating the loading scale
+      function updateProgress(loader) {
+        loadingBar.clear();
+        loadingBar.beginFill(0xfd902b);
+        loadingBar.drawRoundedRect(
+          0,
+          0,
+          (barWidth * loader.progress) / 100,
+          barHeight,
+          10
+        );
+        loadingBar.endFill();
+      }
+
+      // A function that is executed after all resources are loaded
+      function onAssetsLoaded() {
+        continueButton.visible = true;
+      }
+
+      // ===================loader png=================================
+      const basePath =
+        "./images/png/gif-to-png/d9cdeee726eb4aa8f7c410b37d31009bttZZUIeDS46Acy61-";
+
+      for (let i = 1; i <= 46; i++) {
+        const path = `${basePath}${i}.png`;
+        app.loader.add(path);
+      }
+
+      // Array of path templates
+      const animationPaths = [
+        "./images/png/gif-to-png/1e4eb9eb7b0a455aa60cb3f8ecee3342Q3yrbDvsGRzUsmSU-",
+        "./images/png/gif-to-png/slot-img2-freim",
+        "./images/png/gif-to-png/4b16d8fa3825401389f8380e476992a3NQ2aZJZRLbpBO22F-",
+        "./images/png/gif-to-png/24adb3203062225.669063050b223-",
+        "./images/png/gif-to-png/041ce3203062225.6690630cbbe12-",
+        "./images/png/gif-to-png/78da106706524f8788f2957f8135c5f0NDjQWtQJoF8cjOBu-",
+        "./images/png/gif-to-png/79ffdd203062225.6690630cbaa06-",
+        "./images/png/gif-to-png/095f15ae7d3f484db8daa4faec09199dFkTXWaxbCwLssG2W-",
+        "./images/png/gif-to-png/48591f203062225.6690630cbb74d-",
+        "./images/png/gif-to-png/cd5cb18a713a4130f12d56db476622b4CgCMX9v3q4hSOlzx-",
+        "./images/png/gif-to-png/e10c6a69bd1f4f3cfb9bf8ec6cf577218SA8IBNbDuIUy4nA-",
+        "./images/png/gif-to-png/aee481af20b54dd3e0b68a58fb446c0ddNS8cPB9PZu54ViR-",
+      ];
+
+      for (let symbolId = 0; symbolId < animationPaths.length; symbolId++) {
+        for (let frame = 1; frame <= 66; frame++) {
+          const key = `symbol${symbolId}_frame${frame}`;
+          const path = `${animationPaths[symbolId]}${frame}.png`;
+          app.loader.add(key, path);
+        }
+      }
+
+      app.loader
+        .add("slot1", "./images/png/slot-img1.png")
+        .add("slot2", "./images/png/slot-img2.png")
+        .add("slot3", "./images/png/slot-img3.png")
+        .add("slot4", "./images/png/slot-img4.png")
+        .add("slot5", "./images/png/slot-img5.png")
+        .add("slot6", "./images/png/slot-img6.png")
+        .add("slot7", "./images/png/slot-img7.png")
+        .add("slot8", "./images/png/slot-img8.png")
+        .add("slot9", "./images/png/slot-img9.png")
+        .add("slot10", "./images/png/slot-img10.png")
+        .add("slot11", "./images/png/slot-img11.png")
+        .add("slot12", "./images/png/slot-img12.png")
+        .add("fon", "./images/interface/fon.png")
+        .add("fonSlots", "./images/interface/roulette-fon.png")
+        .add("bonusStatus", "./images/interface/roulette-fon-bottom.png")
+        .add("logo", "./images/interface/logo.png")
+        .add("spin", "./images/interface/spin.png")
+        .add("autoSpin", "./images/interface/spin-auto.png")
+        .add("bet", "./images/interface/bet.png")
+        .add("setting", "./images/interface/setting.png")
+        .add("info", "./images/interface/info.png")
+        .add("fonSlotbottom", "./images/interface/roulette-fon-top.png")
+        .add("smallWinSprite", "./images/interface/small-win.png")
+        .add("megaWinSprite", "./images/interface/mega-win.png")
+        .add("bigWinSprite", "./images/interface/big-win.png")
+        .add("superWinSprite", "./images/interface/super-win.png")
+        .add("border", "./images/interface/frame.png")
+        .add("freeSpin", "./images/interface/free-spin.png")
+        .add("shopContainer", "./images/interface/shop-container.png")
+        .add("closeShop", "./images/interface/close-shop.png")
+        .add("okShop", "./images/interface/ok-shop.png")
+        .on("progress", updateProgress) // Updating the download progress
+        .load(onAssetsLoaded);
+
+      // A function to determine the prize depending on the symbol and the number of matches
+      function getPrize(symbolId, count) {
+        const prizes = {
+          0: { 3: "10", 4: "20", 5: "30" }, //free spins
+          1: { 3: 0.1 * betValue, 4: 1.1 * betValue, 5: 3 * betValue },
+          2: { 3: 0.2 * betValue, 4: 1.2 * betValue, 5: 4 * betValue },
+          3: { 3: 0.3 * betValue, 4: 1.3 * betValue, 5: 5 * betValue },
+          4: { 3: 0.4 * betValue, 4: 1.4 * betValue, 5: 6 * betValue },
+          5: { 3: 0.5 * betValue, 4: 1.5 * betValue, 5: 7 * betValue },
+          6: { 3: 0.6 * betValue, 4: 1.6 * betValue, 5: 8 * betValue },
+          7: { 3: 0.7 * betValue, 4: 1.7 * betValue, 5: 9 * betValue },
+          8: { 3: 0.8 * betValue, 4: 1.8 * betValue, 5: 10 * betValue },
+          9: { 3: 0.9 * betValue, 4: 1.9 * betValue, 5: 11 * betValue },
+          12: { 3: 1 * betValue, 4: 2 * betValue, 5: 12 * betValue },
+          10: { 3: 1 * betValue, 4: 2 * betValue, 5: 13 * betValue },
+          11: { 3: 1 * betValue, 4: 2 * betValue, 5: 14 * betValue },
+        };
+
+        if (prizes[symbolId] && prizes[symbolId][count]) {
+          return prizes[symbolId][count];
+        }
+
+        return "неизвестный приз";
+      }
+
+      const reels = [];
+      const SCREN_WIDTH = app.screen.width;
+      const SCREN_HEIGHT = app.screen.height;
+      const SYMBOL_SIZE = Math.floor(SCREN_WIDTH / 6.9032);
+      const REEL_WIDTH = Math.floor(SCREN_WIDTH / 6.4848);
+      const SCALE_SCREN = SCREN_WIDTH / 428;
+      let balanceValue = 20; //Balance
+      let betValue = 10; //Bet
+      let winAmount = 0; //The winning amount
+      let spinfreeFlag = false; //free spin flag
+      let flagSpecAnimation = false; //Flag animation of free spins
+      let freeSpinPrize = 0; //Number of free spins
+      let textBonus = ``;
+      spinfreeFlag
+        ? (textBonus = `ОСТАЛОСЬ ${freeSpinPrize} БЕСПЛАТНЫХ\n СПИНОВ`)
+        : (textBonus = `Купить бесплатные спины`);
+      let running = false; // Flag for tracking the spin status
+      let autoSpinInterval = null; // Variable for storing of the auto-spin interval
+      let timeAnimationReels = 2000; //Animation time of the reels
+      let timeBorder = 500; //Frame display time
+      let timeAnimationSimwol = 3000; //symbol animation time
+      let timeWinAnimation = 3000; //The time of showing the window with the winnings
+      let timeSpecWinAnimation = timeWinAnimation + 3000; //The time of the free spins window display
+
+      // onAssetsLoaded handler builds the example.
+      function startGame() {
+        const symbolAnimations = {};
+
+        //=============Initializing textures for each character after loading==============
+        for (let symbolId = 0; symbolId < animationPaths.length; symbolId++) {
+          symbolAnimations[symbolId] = [];
+
+          // Adding textures for each frame of the animation from the uploaded resources
+          for (let frame = 1; frame <= 66; frame++) {
+            const key = `symbol${symbolId}_frame${frame}`;
+            const texture = app.loader.resources[key].texture;
+            symbolAnimations[symbolId].push(texture);
+          }
+        }
+
+        // Create different slot symbols.
+        const slotTextures = [];
+        for (let i = 1; i <= 12; i++) {
+          const resourceName = `slot${i}`;
+          const resource = app.loader.resources[resourceName];
+          slotTextures.push(resource.texture);
+        }
+
+        const background = PIXI.Sprite.from(app.loader.resources.fon.texture);
+        const fonSlots = PIXI.Sprite.from(
+          app.loader.resources.fonSlots.texture
+        );
+        const bonusStatus = new PIXI.Sprite.from(
+          app.loader.resources.bonusStatus.texture
+        );
+        const containerTextBonus = new PIXI.Text(textBonus, {
+          fontFamily: "Roboto",
+          fontWeight: 700,
+          fontSize: 40,
+          align: "center",
+          fill: 0x3ebbb0,
+          stroke: 0x0d534d,
+          strokeThickness: 8,
+          letterSpacing: 7,
+          lineHeight: 47,
+          wordWrap: true,
+          wordWrapWidth: 800,
+        });
+        const fonSlotbottom = new PIXI.Sprite.from(
+          app.loader.resources.fonSlotbottom.texture
+        );
+        const logo = PIXI.Sprite.from(app.loader.resources.logo.texture);
+        const framesPanda = [];
+        for (let i = 1; i <= 46; i++) {
+          const path = `${basePath}${i}.png`;
+          framesPanda.push(app.loader.resources[path].texture);
+        }
+        const panda = new PIXI.AnimatedSprite(framesPanda);
+        const spin = PIXI.Sprite.from(app.loader.resources.spin.texture);
+        const autoSpin = PIXI.Sprite.from(
+          app.loader.resources.autoSpin.texture
+        );
+        const bet = PIXI.Sprite.from(app.loader.resources.bet.texture);
+        const setting = PIXI.Sprite.from(app.loader.resources.setting.texture);
+        const info = PIXI.Sprite.from(app.loader.resources.info.texture);
+        const backgroundRect = new PIXI.Graphics();
+        const gradientStripLeft = new PIXI.Graphics();
+        const gradientStripCenter = new PIXI.Graphics();
+        const gradientStripRight = new PIXI.Graphics();
+        const contaierGradient = new PIXI.Container();
+        const textGradient = {
+          fontFamily: "Roboto",
+          fontWeight: 500,
+          fill: ["#f7c243", "#fd902b"],
+          fillGradientStops: [0.1, 0.9],
+          fontSize: 48,
+          letterSpacing: 2,
+          fillGradientType: 1,
+        };
+        const textWhite = {
+          fontFamily: "Roboto",
+          fontWeight: 700,
+          fill: "#ffffff",
+          fontSize: 48,
+          fillGradientType: 1,
+        };
+        const textBalance = new PIXI.Text("Баланс:", textGradient);
+        const textBet = new PIXI.Text("Ставка:", textGradient);
+        const textBalanceValue = new PIXI.Text(`${balanceValue} ₽`, textWhite);
+        const textBetValue = new PIXI.Text(`${betValue} ₽`, textWhite);
+        const winContainer = new PIXI.Container();
+        const smallWinSprite = PIXI.Sprite.from(
+          app.loader.resources.smallWinSprite.texture
+        );
+        const megaWinSprite = PIXI.Sprite.from(
+          app.loader.resources.megaWinSprite.texture
+        );
+        const bigWinSprite = PIXI.Sprite.from(
+          app.loader.resources.bigWinSprite.texture
+        );
+        const superWinSprite = PIXI.Sprite.from(
+          app.loader.resources.superWinSprite.texture
+        );
+        const textStyleWin = {
+          fontFamily: "Roboto",
+          fontWeight: 500,
+          fill: ["#ffd700", "#ffa500"],
+          fillGradientStops: [0.1, 0.9],
+          fontSize: 48,
+          fillGradientType: 1,
+        };
+        const winText = new PIXI.Text("", textStyleWin);
+        const freeSpin = new PIXI.Sprite.from(
+          app.loader.resources.freeSpin.texture
+        );
+        const freeSpinValue = new PIXI.Text("", textStyleWin);
+        const shopContainer = PIXI.Sprite.from(
+          app.loader.resources.shopContainer.texture
+        );
+        const closeShop = PIXI.Sprite.from(
+          app.loader.resources.closeShop.texture
+        );
+        const okShop = PIXI.Sprite.from(app.loader.resources.okShop.texture);
+        const shopContainerText = new PIXI.Text("Купить бесплатные спины", {
+          fontFamily: "Roboto",
+          fontWeight: 700,
+          fontSize: 40,
+          align: "center",
+          fill: 0x3ebbb0,
+          stroke: 0x0d534d,
+          strokeThickness: 6,
+          letterSpacing: 4,
+
+          wordWrap: true,
+          wordWrapWidth: 500,
+        });
+        const shopContainerValue = new PIXI.Text("10000 ₽", {
+          fontFamily: "Roboto",
+          fontWeight: 700,
+          fontSize: 40,
+          letterSpacing: 4,
+
+          fill: ["#f7c243", "#fd902b"],
+          fillGradientStops: [0.1, 0.9],
+          stroke: 0x683340,
+          strokeThickness: 6,
+        });
+
+        // ============================================
+        background.width = SCREN_WIDTH;
+        background.height = SCREN_HEIGHT;
+        app.stage.addChild(background);
+
+        const reelContainer = new PIXI.Container();
+        reelContainer.y = (SCREN_HEIGHT / 100) * 35;
+        reelContainer.x = (SCREN_WIDTH - REEL_WIDTH * 5) / 2;
+
+        // Build the reels
+
+        for (let i = 0; i < 5; i++) {
+          const rc = new PIXI.Container();
+          rc.x = i * REEL_WIDTH;
+          reelContainer.addChild(rc);
+
+          const reel = {
+            container: rc,
+            symbols: [],
+            position: 0,
+            previousPosition: 0,
+            blur: new PIXI.filters.BlurFilter(),
+          };
+          reel.blur.blurX = 0;
+          reel.blur.blurY = 0;
+          rc.filters = [reel.blur];
+
+          // Build the symbols
+          for (let j = 0; j < 5; j++) {
+            // We select a random character and get its texture
+            const randomIndex = Math.floor(Math.random() * slotTextures.length);
+            const symbolTexture = slotTextures[randomIndex];
+
+            const symbol = new PIXI.Sprite(symbolTexture);
+            // Adding a unique symbol identifier
+            symbol.id = randomIndex;
+
+            // Scale the symbol to fit symbol area.
+            symbol.y = j * SYMBOL_SIZE;
+            symbol.scale.x = symbol.scale.y = Math.min(
+              SYMBOL_SIZE / symbol.width,
+              SYMBOL_SIZE / symbol.height
+            );
+            symbol.x = Math.round((SYMBOL_SIZE - symbol.width) / 2);
+
+            reel.symbols.push(symbol);
+            rc.addChild(symbol);
+          }
+          reels.push(reel);
+        }
+
+        app.stage.addChild(reelContainer);
+
+        fonSlots.anchor.set(0.5);
+        fonSlots.scale.x = fonSlots.scale.y = SCREN_WIDTH / 736;
+        fonSlots.x = reelContainer.width / 2;
+        fonSlots.y = reelContainer.height / 2 - (fonSlots.height / 100) * 22;
+        fonSlotbottom.anchor.set(0.5);
+        fonSlotbottom.scale.x = fonSlotbottom.scale.y = SCALE_SCREN;
+        fonSlotbottom.x = reelContainer.width / 2;
+        fonSlotbottom.y = reelContainer.height * 0.84;
+        bonusStatus.scale.x = reelContainer.height * 0.0099;
+        bonusStatus.scale.y = 1;
+        bonusStatus.x = 0;
+        bonusStatus.y = (reelContainer.height / 100) * 80;
+        reelContainer.addChildAt(fonSlots, 0);
+        reelContainer.addChild(fonSlotbottom);
+        reelContainer.addChild(bonusStatus);
+
+        containerTextBonus.interactive = true;
+        containerTextBonus.buttonMode = true;
+        containerTextBonus.anchor.set(0.5, 0);
+        containerTextBonus.scale.set(0.35);
+        containerTextBonus.x = bonusStatus.x + bonusStatus.width / 2;
+        containerTextBonus.y =
+          bonusStatus.y +
+          bonusStatus.height * 0.5 -
+          containerTextBonus.height / 2;
+        containerTextBonus.on("pointerdown", () => {
+          shopContainer.visible = true;
+        });
+        reelContainer.addChild(containerTextBonus);
+
+        const topContainer = new PIXI.Container();
+        logo.scale.x = logo.scale.y = 0.6586 * SCALE_SCREN;
+        logo.y = -logo.height * 0.6;
+        logo.x = -logo.width * 0.25;
+        panda.scale.x = panda.scale.y = 0.265 * SCALE_SCREN;
+        panda.x = reelContainer.width - panda.width * 1.5;
+        panda.y = -panda.height * 0.6;
+        panda.animationSpeed = 0.6;
+        panda.loop = true;
+        panda.play();
+        topContainer.addChild(logo);
+        topContainer.addChild(panda);
+        topContainer.y = -topContainer.height;
+        reelContainer.addChild(topContainer);
+
+        const interfaceContainer = new PIXI.Container();
+        interfaceContainer.x = SCREN_WIDTH / 2;
+        interfaceContainer.y = (SCREN_HEIGHT / 100) * 90;
+        spin.anchor.set(0.5);
+        spin.scale.set(0.1109 * SCALE_SCREN);
+        spin.x = interfaceContainer.width / 2;
+        spin.y = spin.height / 2;
+        spin.y = -spin.height / 2;
+        spin.interactive = true; // Set the interactivity.
+        spin.buttonMode = true;
+        spin.on("pointerdown", () => {
+          startPlay();
+        });
+
+        autoSpin.interactive = true;
+        autoSpin.buttonMode = true;
+        autoSpin.anchor.set(0.5);
+        autoSpin.scale.set(0.0649 * SCALE_SCREN);
+        autoSpin.x = interfaceContainer.width / 2 + spin.height;
+        autoSpin.y = -autoSpin.height / 2;
+
+        const modalAutoSpin = document.getElementById("modal-autoplay");
+        const closeModalAutospin = document.getElementById(
+          "modal-autoplay-close"
+        );
+        const closeModalAutospinBtn = document.getElementById("autoplay-btn");
+        autoSpin.on("pointerdown", () => {
+          modalAutoSpin.style.display = "block";
+          stopAutoSpin();
+        });
+        closeModalAutospin.addEventListener("click", () => {
+          modalAutoSpin.style.display = "none";
+        });
+        closeModalAutospinBtn.addEventListener("click", () => {
+          modalAutoSpin.style.display = "none";
+        });
+        bet.interactive = true;
+        bet.buttonMode = true;
+        bet.anchor.set(0.5);
+        bet.scale.set(0.0649 * SCALE_SCREN);
+        bet.x = interfaceContainer.width / 2 - spin.height;
+        bet.y = -bet.height / 2;
+        const modal = document.getElementById("modal-bet");
+        const closeModal = document.getElementById("modal-bet-close");
+        bet.on("pointerdown", () => {
+          modal.style.display = "block";
+        });
+        closeModal.addEventListener("click", () => {
+          modal.style.display = "none";
+        });
+
+        interfaceContainer.addChild(spin, autoSpin, bet);
+        app.stage.addChild(interfaceContainer);
+
+        // Rotation animation for the button
+        app.ticker.add(() => {
+          if (running) {
+            spin.rotation += 0.02;
+          }
+        });
+
+        const infoContainer = new PIXI.Container();
+        infoContainer.y = (SCREN_HEIGHT / 100) * 95;
+        setting.interactive = true;
+        setting.buttonMode = true;
+        setting.anchor.set(0.5);
+        setting.scale.x = setting.scale.y = SCALE_SCREN;
+        setting.x = (SCREN_WIDTH / 100) * 10;
+        const modalSetting = document.getElementById("modal-setting");
+        const closeModalSetting = document.getElementById(
+          "modal-setting-close"
+        );
+        setting.on("pointerdown", () => {
+          modalSetting.style.display = "block";
+        });
+        closeModalSetting.addEventListener("click", () => {
+          modalSetting.style.display = "none";
+        });
+        info.interactive = true;
+        info.buttonMode = true;
+        info.anchor.set(0.5);
+        info.scale.x = info.scale.y = SCALE_SCREN;
+        info.x = (SCREN_WIDTH / 100) * 90;
+        const modalInfo = document.getElementById("modal-rules");
+        const closeModalInfo = document.getElementById("modal-rules-close");
+        info.on("pointerdown", () => {
+          modalInfo.style.display = "block";
+        });
+        closeModalInfo.addEventListener("click", () => {
+          modalInfo.style.display = "none";
+        });
+        infoContainer.addChild(setting, info);
+        app.stage.addChild(infoContainer);
+
+        backgroundRect.beginFill(0x000000, 0.3);
+        backgroundRect.drawRect(0, 0, 250, 40);
+        backgroundRect.endFill();
+        gradientStripLeft.beginFill(0x000000, 0.2);
+        gradientStripLeft.drawRect(50, 0, 150, 40);
+        gradientStripLeft.endFill();
+        gradientStripCenter.beginFill(0x000000, 0.2);
+        gradientStripCenter.drawRect(100, 0, 50, 40);
+        gradientStripCenter.endFill();
+        gradientStripRight.beginFill(0x000000, 0.2);
+        gradientStripRight.drawRect(75, 0, 100, 40);
+        gradientStripRight.endFill();
+        contaierGradient.addChild(backgroundRect);
+        contaierGradient.addChild(gradientStripLeft);
+        contaierGradient.addChild(gradientStripCenter);
+        contaierGradient.addChild(gradientStripRight);
+        contaierGradient.pivot.x = contaierGradient.width / 2;
+        contaierGradient.pivot.y = contaierGradient.height / 2;
+        contaierGradient.scale.x = SCALE_SCREN;
+        contaierGradient.x = app.screen.width / 2;
+        infoContainer.addChild(contaierGradient);
+
+        textBalance.position.set(5, 10);
+        textBalance.scale.set(0.36);
+        textBet.position.set(140, 10);
+        textBet.scale.set(0.36);
+        textBalanceValue.position.set(67, 10);
+        textBalanceValue.scale.set(0.35);
+        textBetValue.position.set(202, 10);
+        textBetValue.scale.set(0.35);
+        contaierGradient.addChild(
+          textBalance,
+          textBet,
+          textBetValue,
+          textBalanceValue
+        );
+
+        winContainer.alpha = 0; // Making the container invisible initially
+        winContainer.pivot.set(0.5);
+        winContainer.x = SCREN_WIDTH / 2;
+        winContainer.y = SCREN_HEIGHT / 2;
+        app.stage.addChild(winContainer);
+        smallWinSprite.visible = false;
+        smallWinSprite.anchor.set(0.5);
+        smallWinSprite.scale.set(SCALE_SCREN);
+        megaWinSprite.visible = false;
+        megaWinSprite.anchor.set(0.5);
+        megaWinSprite.scale.set(SCALE_SCREN);
+        superWinSprite.visible = false;
+        superWinSprite.anchor.set(0.5);
+        superWinSprite.scale.set(SCALE_SCREN);
+        bigWinSprite.visible = false;
+        bigWinSprite.anchor.set(0.5);
+        bigWinSprite.scale.set(SCALE_SCREN);
+        winContainer.addChild(
+          smallWinSprite,
+          megaWinSprite,
+          superWinSprite,
+          bigWinSprite
+        );
+        winText.anchor.set(0.5, 0);
+        winText.scale.set(0.5);
+        winContainer.addChild(winText);
+
+        freeSpin.alpha = 0; // Making the container invisible initially
+        // freeSpin.visible = false;
+        freeSpin.anchor.set(0.5);
+        freeSpin.x = SCREN_WIDTH / 2;
+        freeSpin.y = SCREN_HEIGHT / 2;
+        freeSpin.scale.set(SCALE_SCREN);
+        app.stage.addChild(freeSpin);
+        freeSpinValue.anchor.set(0.5, 0);
+        freeSpinValue.scale.set(0.5);
+        freeSpinValue.y = freeSpin.height * 0.2;
+        freeSpin.addChild(freeSpinValue);
+
+        shopContainer.visible = false;
+        shopContainer.anchor.set(0.5);
+        shopContainer.x = SCREN_WIDTH / 2;
+        shopContainer.y = SCREN_HEIGHT / 2;
+        shopContainer.scale.set(SCALE_SCREN);
+        app.stage.addChild(shopContainer);
+
+        closeShop.interactive = true;
+        closeShop.buttonMode = true;
+        closeShop.anchor.set(0.5);
+        closeShop.scale.set(SCALE_SCREN);
+        closeShop.y = shopContainer.height * 0.5;
+        closeShop.x = shopContainer.width * 0.2;
+        closeShop.on("pointerdown", () => {
+          shopContainer.visible = false;
+        });
+        okShop.anchor.set(0.5);
+        okShop.scale.set(SCALE_SCREN);
+        okShop.y = shopContainer.height * 0.5;
+        okShop.x = -shopContainer.width * 0.2;
+        shopContainerText.anchor.set(0.5);
+        shopContainerText.scale.set(0.4);
+        shopContainerText.y = 0;
+        shopContainerText.x = 0;
+        shopContainerValue.anchor.set(0.5);
+        shopContainerValue.scale.set(0.8);
+        shopContainerValue.y = shopContainerText.height;
+        shopContainerValue.x = 0;
+        shopContainer.addChild(
+          closeShop,
+          okShop,
+          shopContainerText,
+          shopContainerValue
+        );
+
+        // ==========================================
+        // Function to start the spin
+        function startPlay() {
+          if (running) return;
+          running = true;
+          if (spinfreeFlag) {
+            freeSpinPrize -= 1;
+            if (freeSpinPrize == 0) spinfreeFlag = false;
+            containerTextBonus.text = `ОСТАЛОСЬ ${freeSpinPrize} БЕСПЛАТНЫХ\n СПИНОВ`;
+          } else {
+            containerTextBonus.text = `Купить бесплатные спины`;
+          }
+          flagSpecAnimation = false;
+
+          // The logic for starting the animation of the rotation of the reels
+          for (let i = 0; i < reels.length; i++) {
+            const r = reels[i];
+            const extra = Math.floor(Math.random() * 3);
+            const target = r.position + 10 + i * 5 + extra;
+            const time = timeAnimationReels + i * 600 + extra * 600;
+            tweenTo(
+              r,
+              "position",
+              target,
+              time,
+              backout(0.5),
+              null,
+              i === reels.length - 1 ? reelsComplete : null
+            );
+          }
+        }
+
+        // The function to start the auto spin
+        function startAutoSpin() {
+          const sliderValue = document.querySelector("#autoplay-demo");
+          const autoSpinValue = sliderValue.textContent;
+          let count = autoSpinValue;
+          if (running) return;
+          autoSpinInterval = setInterval(() => {
+            if (!running) {
+              count--;
+              if (count === 0) stopAutoSpin();
+              startPlay(); // Запускаем спин, если барабаны не вращаются
+            }
+          }, 500); // Интервал автоспина (в миллисекундах)
+        }
+
+        // Function for stopping the auto spin
+        function stopAutoSpin() {
+          if (autoSpinInterval != null) {
+            clearInterval(autoSpinInterval); // Останавливаем интервал автоспина
+            autoSpinInterval = null; // Сбрасываем переменную
+          }
+        }
+
+        //Slider for selecting the number of auto spin
+        const sliderEl = document.querySelector("#range");
+        const sliderValue = document.querySelector("#autoplay-demo");
+        const sliderValueBtn = document.querySelector("#autoplay-btn-value");
+
+        sliderEl.addEventListener("input", (event) => {
+          const tempSliderValue = event.target.value;
+          sliderValue.textContent = tempSliderValue;
+          sliderValueBtn.textContent = "(" + tempSliderValue + ")";
+
+          const progress = (tempSliderValue / sliderEl.max) * 100;
+
+          sliderEl.style.background = `linear-gradient(to right, #fd902b ${progress}%, #fff ${progress}%)`;
+        });
+
+        const autoSpinBtn = document.getElementById("autoplay-btn");
+
+        autoSpinBtn.addEventListener("click", startAutoSpin);
+
+        // Spin completion function
+        function reelsComplete() {
+          setTimeout(() => {
+            checkWin(); // Checking for winning combinations
+          }, 500);
+        }
+
+        // Listen for animate update.
+        app.ticker.add((delta) => {
+          // Update the slots.
+          for (let i = 0; i < reels.length; i++) {
+            const r = reels[i];
+            // Update blur filter y amount based on speed.
+            r.blur.blurY = (r.position - r.previousPosition) * 8;
+            r.previousPosition = r.position;
+
+            // Update symbol positions on reel.
+            for (let j = 0; j < r.symbols.length; j++) {
+              const s = r.symbols[j];
+              const prevy = s.y;
+              s.y =
+                ((r.position + j) % r.symbols.length) * SYMBOL_SIZE -
+                SYMBOL_SIZE;
+
+              if (s.y < 0 && prevy > SYMBOL_SIZE) {
+                // Detect going over and swap a texture.
+                // Replace the texture with the next one and save the symbol ID
+                const nextIndex = Math.floor(
+                  Math.random() * slotTextures.length
+                );
+                s.texture = slotTextures[nextIndex];
+                s.id = nextIndex; // Assigning a new identifier to the symbol
+
+                // Scale the symbol to fit symbol area.
+                s.scale.x = s.scale.y = Math.min(
+                  SYMBOL_SIZE / s.texture.width,
+                  SYMBOL_SIZE / s.texture.height
+                );
+                s.x = Math.round((SYMBOL_SIZE - s.width) / 2);
+              }
+            }
+          }
+        });
+
+        // Very simple tweening utility function. This should be replaced with a proper tweening library in a real product.
+        const tweening = [];
+        function tweenTo(
+          object,
+          property,
+          target,
+          time,
+          easing,
+          onchange,
+          oncomplete
+        ) {
+          const tween = {
+            object,
+            property,
+            propertyBeginValue: object[property],
+            target,
+            easing,
+            time,
+            change: onchange,
+            complete: oncomplete,
+            start: Date.now(),
+          };
+
+          tweening.push(tween);
+          return tween;
+        }
+        // Listen for animate update.
+        app.ticker.add((delta) => {
+          const now = Date.now();
+          const remove = [];
+          for (let i = 0; i < tweening.length; i++) {
+            const t = tweening[i];
+            const phase = Math.min(1, (now - t.start) / t.time);
+
+            t.object[t.property] = lerp(
+              t.propertyBeginValue,
+              t.target,
+              t.easing(phase)
+            );
+            if (t.change) t.change(t);
+            if (phase === 1) {
+              t.object[t.property] = t.target;
+              if (t.complete) t.complete(t);
+              remove.push(t);
+            }
+          }
+          for (let i = 0; i < remove.length; i++) {
+            tweening.splice(tweening.indexOf(remove[i]), 1);
+          }
+        });
+
+        // Basic lerp funtion.
+        function lerp(a1, a2, t) {
+          return a1 * (1 - t) + a2 * t;
+        }
+
+        // Backout function from tweenjs.
+        // https://github.com/CreateJS/TweenJS/blob/master/src/tweenjs/Ease.js
+        function backout(amount) {
+          return (t) => --t * t * ((amount + 1) * t + amount) + 1;
+        }
+
+        // ===========================================
+        //Function checking for winning combinations
+        function checkWin() {
+          function getReelSymbolsInOrder(reel) {
+            // Sorting the symbols on the reel by their `y` coordinate
+            return reel.symbols.slice().sort((a, b) => a.y - b.y);
+          }
+
+          // We define the lines. Each line contains the indexes of the symbols on the reels.
+          const lines = [
+            [0, 0, 0, 0, 0], // Верхняя горизонтальная линия
+            [1, 1, 1, 1, 1], // Вторая сверху горизонтальная линия
+            [2, 2, 2, 2, 2], // Центральная горизонтальная линия
+            [3, 3, 3, 3, 3], // Вторая снизу горизонтальная линия
+            [4, 4, 4, 4, 4], // Нижняя горизонтальная линия
+            [0, 1, 2, 3, 4], // Диагональ сверху слева вниз направо
+            [4, 3, 2, 1, 0], // Диагональ снизу слева вверх направо
+          ];
+
+          // We collect the symbols in the order they are displayed on the reels
+          const reelSymbols = reels.map(getReelSymbolsInOrder);
+
+          let maxWinAmount = 0;
+          let maxWinSpecAmount = 0;
+          let bestWinningLine = null;
+          let bestSpecWinningLine = null;
+          let countFlag = false;
+
+          for (const line of lines) {
+            const lineSymbols = line.map(
+              (index, reelIndex) => reelSymbols[reelIndex][index]
+            );
+
+            // Counting the number of identical symbols on the line
+            const symbolCounts = {};
+            lineSymbols.forEach((symbol) => {
+              const symbolId = symbol.id;
+              if (!symbolCounts[symbolId]) {
+                symbolCounts[symbolId] = { count: 0, symbols: [] };
+              }
+              symbolCounts[symbolId].count++;
+              symbolCounts[symbolId].symbols.push(symbol);
+            });
+
+            // We check if there is a win on this line
+            for (const [symbolId, { count, symbols }] of Object.entries(
+              symbolCounts
+            )) {
+              if (count >= 3) {
+                countFlag = true;
+                const prize = getPrize(symbolId, count);
+
+                // ============================
+                if (prize > maxWinSpecAmount && typeof prize === "string") {
+                  maxWinSpecAmount = parseInt(prize, 10); // Converting a string to a number
+                  bestSpecWinningLine = symbols;
+                }
+                // ========================
+
+                if (prize > maxWinAmount && typeof prize != "string") {
+                  maxWinAmount = prize;
+                  bestWinningLine = symbols;
+                }
+              }
+            }
+          }
+
+          // Processing the largest winnings
+          if (maxWinSpecAmount > 0) {
+            freeSpinPrize += maxWinSpecAmount;
+
+            // Adding frames and animations to the winning symbols
+            bestSpecWinningLine.forEach((symbol) => {
+              addWinningBorder(symbol);
+              setTimeout(() => playSpecialAnimation(symbol), timeBorder);
+            });
+          }
+
+          // ============================
+          // Processing the largest winnings
+          if (maxWinAmount > 0) {
+            updateBalanceUp(maxWinAmount);
+            winAmount = maxWinAmount;
+
+            bestWinningLine.forEach((symbol) => {
+              addWinningBorder(symbol);
+              setTimeout(() => playWinAnimation(symbol), timeBorder);
+            });
+          } else if ((maxWinAmount = 0 || !countFlag)) {
+            // If there is no win and the spin is not free, we subtract the bet
+            running = false;
+            if (!spinfreeFlag) updateBalanceDown(betValue);
+          }
+        }
+
+        //function update balance
+        function updateBalanceUp(value) {
+          balanceValue += value;
+          textBalanceValue.text = `${balanceValue} ₽`;
+        }
+        function updateBalanceDown(value) {
+          balanceValue -= value;
+          textBalanceValue.text = `${balanceValue} ₽`;
+        }
+
+        // A function for clearing frames and animations before a new spin
+        function clearPreviousWinEffects() {
+          reels.forEach((reel) => {
+            reel.symbols.forEach((symbol) => {
+              // Удаляем рамку, если она есть
+              if (symbol.border) {
+                symbol.parent.removeChild(symbol.border);
+                symbol.border = null;
+              }
+
+              // Stop and remove the animation, if it has been added
+              if (symbol.animation) {
+                symbol.animation.stop();
+                symbol.parent.removeChild(symbol.animation);
+                symbol.visible = true; // Showing the original symbol
+                symbol.animation = null;
+              }
+            });
+          });
+        }
+
+        // A function for adding a frame to a winning symbol
+        function addWinningBorder(symbol) {
+          const border = PIXI.Sprite.from(app.loader.resources.border.texture);
+          border.width = symbol.width + 20;
+          border.height = symbol.height + 20;
+          border.x = symbol.x - 10 + border.width / 2;
+          border.y = symbol.y - 10 + border.height / 2;
+          border.anchor.set(0.5);
+          symbol.parent.addChild(border);
+          symbol.border = border; // We save the link to the frame in the symbol for further deletion
+        }
+
+        // A function to start the animation on the winning symbol
+        function playWinAnimation(symbol) {
+          const symbolId = symbol.id;
+          const frames = symbolAnimations[symbolId];
+
+          if (!frames) {
+            console.warn(`Анимация для символа с ID ${symbolId} не найдена`);
+            return;
+          }
+
+          const animation = new PIXI.AnimatedSprite(frames);
+          animation.loop = true;
+          animation.animationSpeed = 0.6;
+          animation.x = symbol.x + symbol.width / 2;
+          animation.y = symbol.y + symbol.height / 2;
+          animation.width = symbol.width;
+          animation.height = symbol.height;
+          animation.anchor.set(0.5);
+
+          symbol.parent.addChild(animation);
+          animation.play();
+          setTimeout(() => {
+            if (winAmount > 0) {
+              showWinAnimation(winAmount); // We show an animation of the winnings with the amount
+            }
+          }, timeAnimationSimwol);
+          symbol.visible = false;
+          symbol.animation = animation; // We save the link to the animation in the symbol for further deletion
+        }
+
+        // A function for animating the display of the container
+        function showWinAnimation(amount) {
+          // Sprite selection depending on the winning amount
+          smallWinSprite.visible = false;
+          megaWinSprite.visible = false;
+          superWinSprite.visible = false;
+          bigWinSprite.visible = false;
+
+          if (amount < 50) {
+            smallWinSprite.visible = true;
+            winText.y = smallWinSprite.height * 0.155;
+          } else if (amount < 200) {
+            megaWinSprite.visible = true;
+            winText.y = megaWinSprite.height * 0.155;
+          } else if (amount < 500) {
+            superWinSprite.visible = true;
+            winText.y = superWinSprite.height * 0.115;
+          } else {
+            bigWinSprite.visible = true;
+            winText.y = bigWinSprite.height * 0.115;
+          }
+
+          winText.text = `Выигрыш: ${amount} ₽`;
+
+          // Smooth container display
+          let alphaIncrement = 0.05;
+          const fadeIn = () => {
+            if (winContainer.alpha < 1) {
+              winContainer.alpha += alphaIncrement;
+            } else {
+              app.ticker.remove(fadeIn);
+              setTimeout(() => hideWinAnimation(), timeWinAnimation); // Скрываем через 1.5 секунды
+            }
+          };
+
+          app.ticker.add(fadeIn);
+        }
+
+        // Function for hiding the container
+        function hideWinAnimation() {
+          let alphaDecrement = 0.05;
+          const fadeOut = () => {
+            if (winContainer.alpha > 0) {
+              winContainer.alpha -= alphaDecrement;
+            } else {
+              app.ticker.remove(fadeOut);
+            }
+          };
+
+          app.ticker.add(fadeOut);
+          clearPreviousWinEffects();
+          if (!flagSpecAnimation) {
+            running = false;
+          }
+        }
+
+        // =============================================================
+        //A function for animating auto spin symbol
+        function playSpecialAnimation(symbols) {
+          flagSpecAnimation = true;
+          const symbolId = symbols.id;
+          const frames = symbolAnimations[symbolId];
+
+          if (!frames) {
+            console.warn(`Анимация для символа с ID ${symbolId} не найдена`);
+            return;
+          }
+
+          const animation = new PIXI.AnimatedSprite(frames);
+          animation.loop = true;
+          animation.animationSpeed = 0.6;
+          animation.x = symbols.x + symbols.width / 2;
+          animation.y = symbols.y + symbols.height / 2;
+          animation.width = symbols.width;
+          animation.height = symbols.height;
+          animation.anchor.set(0.5);
+
+          symbols.parent.addChild(animation);
+          animation.play();
+          setTimeout(() => {
+            showWinSpinAnimation(freeSpinPrize); // We show a window with the number of spins
+          }, timeAnimationSimwol);
+          symbols.visible = false;
+          symbols.animation = animation; // We save the link to the animation in the symbol for further deletion
+        }
+
+        // A function for animating the display of a free spin container
+        function showWinSpinAnimation(freeS) {
+          // freeSpin.visible = true;
+          spinfreeFlag = true;
+          // Обновляем текст с суммой выигрыша
+          freeSpinValue.text = freeS;
+          containerTextBonus.text = `ОСТАЛОСЬ ${freeSpinPrize} БЕСПЛАТНЫХ\n СПИНОВ`;
+
+          // Smooth appearance of the container
+          let alphaIncrement = 0.05;
+          const fadeIn = () => {
+            if (freeSpin.alpha < 1) {
+              freeSpin.alpha += alphaIncrement;
+            } else {
+              app.ticker.remove(fadeIn);
+              setTimeout(() => hideWinSpinAnimation(), timeSpecWinAnimation);
+            }
+          };
+
+          app.ticker.add(fadeIn);
+        }
+
+        // A function to hide the free spin container
+        function hideWinSpinAnimation() {
+          let alphaDecrement = 0.05;
+          const fadeOut = () => {
+            if (freeSpin.alpha > 0) {
+              freeSpin.alpha -= alphaDecrement;
+            } else {
+              app.ticker.remove(fadeOut);
+            }
+          };
+
+          app.ticker.add(fadeOut);
+          clearPreviousWinEffects();
+          running = false;
+          // freeSpin.visible = false;
+        }
+        // =============================================================
+      }
+    </script>
+  </body>
+</html>
