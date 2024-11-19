@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Miner</title>
+    <style>
+      html,
+      body {
+        font-size: 100%;
+        line-height: 1;
+        -ms-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+      }
+      *,
+      *:before,
+      *:after {
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+      :focus,
+      :active {
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      /* ================================================ */
+
+      html {
+        height: 100dvh;
+        overflow: hidden;
+      }
+
+      body {
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin: auto;
+        margin: 0;
+        font-family: "Roboto", sans-serif;
+      }
+      img {
+        width: 100%;
+      }
+
+      /* ======================================== */
+
+      @font-face {
+        font-family: "Roboto";
+        src: url("./fonts/Roboto-Bold.ttf") format("truetype");
+        font-weight: 700;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "Roboto";
+        src: url("./fonts/Roboto-Medium.ttf") format("truetype");
+        font-weight: 500;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "Roboto";
+        src: url("./fonts/Roboto-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+
+      /* ============menu================ */
+      .game-menu {
+        /* display: none; */
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.1vh 3.8vw;
+        /* width: 100%; */
+        background: #28212b;
+      }
+
+      .game-menu-back {
+        display: flex;
+        align-items: center;
+        font-weight: 400;
+        font-size: 3.2vw;
+        line-height: 2.29;
+        letter-spacing: 0.04em;
+        text-align: center;
+        color: #fff;
+      }
+
+      .game-menu-wrapper {
+        display: flex;
+        font-weight: 400;
+        font-size: 3vw;
+        line-height: 2.67;
+        letter-spacing: 0.04em;
+        text-align: center;
+        color: #fff;
+      }
+
+      .game-menu-arround {
+        margin-right: 3.3vw;
+        width: 2.4vw;
+        height: 5.2vw;
+      }
+
+      .game-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2.4vw;
+        margin-left: 2.4vw;
+        border-radius: 3vw;
+        padding: 0px 2.4vw;
+        background: radial-gradient(
+            178.09% 220.16% at 94.89% -132.81%,
+            rgb(255, 122, 0) 67.58895516395569%,
+            rgb(255, 199, 0) 100%
+          ),
+          radial-gradient(
+            137.51% 118.3% at 32.95% 0%,
+            rgb(255, 137, 137) 21.246936917304993%,
+            rgb(255, 169, 106) 88.62413167953491%
+          ),
+          radial-gradient(
+            182.56% 55.34% at 5.68% 100%,
+            rgb(246, 251, 34) 0%,
+            rgb(255, 158, 69) 100%
+          ),
+          radial-gradient(
+            238.39% 44.19% at 96.59% 31.25%,
+            rgb(255, 255, 255) 0%,
+            rgb(255, 255, 255) 100%
+          );
+      }
+
+      .game-menu-icon {
+        width: 5.6vw;
+        height: 5.6vw;
+      }
+
+      /* ==================miner============================ */
+
+      :root {
+        --tileSize: 50px;
+        --boardSize: 0px;
+      }
+
+      #miner-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.3vh;
+        /* width: 428px;
+        height: 767px; */
+        width: 100%;
+        height: 100%;
+        background: #272749;
+
+        padding-bottom: 9vh;
+      }
+
+      .miner-title {
+        margin: 1.3vh 0;
+        width: 45.5%;
+        height: 7vh;
+      }
+
+      .ratio-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.9vw;
+        width: 90%;
+      }
+
+      .img-bomb {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        align-items: end;
+        justify-content: center;
+        width: 7.2vw;
+        height: 9.6vw;
+        transform: translate(-50%, -50%);
+        background: url(./images/bomb-logo.svg) no-repeat 50% 50% / contain;
+      }
+
+      #bomb-value {
+        margin-bottom: 0.7vh;
+        display: block;
+        font-weight: 700;
+        font-size: 3.7vw;
+        text-align: center;
+        color: #000;
+      }
+
+      .ratio-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.4vh;
+        width: 14.8vw;
+        height: 6vw;
+        background: #255762;
+        font-weight: 700;
+        font-size: 3.7vw;
+        text-align: center;
+        color: #fff;
+      }
+
+      .ratio-item-activ {
+        background: #23887c;
+      }
+
+      .board-wrap {
+        width: 95%;
+      }
+
+      #board {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 0 auto;
+      }
+
+      .tile {
+        background: url(./images/bg-tile-defolt.svg) no-repeat 50% 50% / contain;
+        width: var(--tileSize);
+        height: var(--tileSize);
+        /* width: 38.5vw;
+        height: 38.5vw; */
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        user-select: none;
+      }
+
+      .tile--bomb {
+        background: url(./images/bg-tile-bomb.svg) no-repeat 50% 50% / contain;
+      }
+      .tile--checked {
+        background: url(./images/bg-tile.svg) no-repeat 50% 50% / contain;
+      }
+
+      .miner-subtitle {
+        font-weight: 600;
+        font-size: 2.9vw;
+        text-align: center;
+        color: #fff;
+      }
+
+      .setting-mines {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 2.9vw;
+        text-align: center;
+        color: #fff;
+      }
+
+      .difficulty-radio {
+        appearance: none;
+      }
+
+      .difficulty {
+        position: relative;
+        display: block;
+        border: 0.1vh solid #1c1f24;
+        width: 13.3vw;
+        height: 7.5vw;
+        background: #2c2c2c;
+      }
+
+      #difficulty-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 0.1vh solid #1c1f24;
+        width: 24.5vw;
+        height: 7.5vw;
+        background: #2c2c2c;
+      }
+
+      .difficulty:has(.difficulty-radio:checked) {
+        border: 0.1vh solid #1c1f24;
+        border-radius: 0.4vh 0 0 0.4vh;
+        width: 13.3vw;
+        height: 7.5vw;
+        background: #3ad963;
+      }
+
+      .difficulty-title {
+        position: relative;
+      }
+
+      .difficulty-title:has(.difficulty-radio:checked) {
+        color: #000;
+      }
+
+      .difficulty-title-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        transform: translate(-50%, -50%);
+      }
+
+      .size-board-title {
+        position: relative;
+      }
+
+      .size-board-title:has(.size-board-radio:checked) {
+        color: #000;
+      }
+
+      .size-board {
+        display: block;
+        border-radius: 2.6vh;
+        width: 17.5vw;
+        height: 7.5vw;
+        box-shadow: 0 0 0.5vh 0 #2c2c2c;
+        background: #2c2c2c;
+      }
+
+      .size-board:has(.size-board-radio:checked) {
+        border: 0.1vh solid #2c2c2c;
+        box-shadow: 0 0 0.4vh 0 #3ad963;
+        background: #3ad963;
+      }
+
+      .size-board-radio {
+        appearance: none;
+      }
+
+      .size-board-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: block;
+        transform: translate(-50%, -50%);
+      }
+
+      .setting-board {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.2vw;
+        font-weight: 700;
+        font-size: 3.7vw;
+        text-align: center;
+        color: #fff;
+      }
+
+      .info-balance {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        margin-bottom: 1vh;
+        width: 90%;
+        height: 10.7vw;
+        padding: 0.5vh 0;
+        background: linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0.5) 50%,
+          rgba(0, 0, 0, 0) 100%
+        );
+        font-weight: 700;
+        font-size: 2.9vw;
+        text-align: center;
+        color: #ffffffcc;
+      }
+
+      .wrapper-balance,
+      .wrapper-winning {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5vh;
+      }
+
+      #balance-value,
+      #winng-value,
+      #bet-value {
+        font-weight: 700;
+        font-size: 3.7vw;
+        text-align: center;
+        color: #fff;
+      }
+
+      .bet-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 7vw;
+      }
+
+      #arround-top,
+      #arround-bottom {
+        width: 10.3vw;
+        height: 8vw;
+      }
+
+      #bet-btn {
+        border-radius: 3.9vh;
+        width: 52vw;
+        /* height: 49px; */
+        padding: 3.9vw 0;
+        box-shadow: 0 0 0.5vh 0 #3ad963;
+        background: #3ad963;
+        font-weight: 700;
+        font-size: 3.7vw;
+        text-align: center;
+        color: #2c2c2c;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="miner-container">
+      <div class="miner-title">
+        <img src="./images/logo-title.svg" alt="" />
+      </div>
+      <div class="ratio-container">
+        <div class="img-bomb">
+          <span id="bomb-value">1</span>
+        </div>
+        <div class="ratio-item ratio-item-activ">0.00x</div>
+        <div class="ratio-item">0.00x</div>
+        <div class="ratio-item">0.00x</div>
+        <div class="ratio-item">0.00x</div>
+        <div class="ratio-item">0.00x</div>
+      </div>
+      <div class="board-wrap">
+        <div id="board"></div>
+      </div>
+      <span class="miner-subtitle">Число мин</span>
+
+      <div class="setting-mines">
+        <label class="difficulty-title">
+          <span class="difficulty">
+            <input
+              type="radio"
+              name="difficulty"
+              value="0.2"
+              class="difficulty-radio"
+              checked
+            />
+          </span>
+          <span class="difficulty-title-text">1</span>
+        </label>
+        <label class="difficulty-title">
+          <span class="difficulty"
+            ><input
+              type="radio"
+              name="difficulty"
+              value="0.4"
+              class="difficulty-radio"
+          /></span>
+          <span class="difficulty-title-text">2</span>
+        </label>
+        <label class="difficulty-title">
+          <span class="difficulty"
+            ><input
+              type="radio"
+              name="difficulty"
+              value="0.6"
+              class="difficulty-radio"
+          /></span>
+          <span class="difficulty-title-text">3</span>
+        </label>
+        <div id="difficulty-btn">Настроить</div>
+      </div>
+      <span class="miner-subtitle">Размер поля</span>
+      <div class="setting-board">
+        <label class="size-board-title">
+          <span class="size-board"
+            ><input
+              checked
+              type="radio"
+              name="size"
+              value="2"
+              class="size-board-radio"
+          /></span>
+          <span class="size-board-text">2x2</span>
+        </label>
+        <label class="size-board-title">
+          <span class="size-board"
+            ><input type="radio" name="size" value="3" class="size-board-radio"
+          /></span>
+          <span class="size-board-text">3x3</span>
+        </label>
+        <label class="size-board-title">
+          <span class="size-board"
+            ><input type="radio" name="size" value="4" class="size-board-radio"
+          /></span>
+          <span class="size-board-text"> 4x4</span>
+        </label>
+        <label class="size-board-title">
+          <span class="size-board"
+            ><input type="radio" name="size" value="5" class="size-board-radio"
+          /></span>
+          <span class="size-board-text">5x5</span>
+        </label>
+      </div>
+      <div class="info-balance">
+        <div class="wrapper-balance">
+          <span>Баланс</span>
+          <span id="balance-value">0,00₽</span>
+        </div>
+        <div class="wrapper-winning">
+          <span>Выигрыш</span>
+          <span id="winng-value">0,00₽</span>
+        </div>
+      </div>
+      <span id="bet-value">0,00₽</span>
+      <div class="bet-wrapper">
+        <div id="arround-top">
+          <img src="./images/arround-top.svg" alt="" />
+        </div>
+        <div id="bet-btn">СТАВКА</div>
+        <div id="arround-bottom">
+          <img src="./images/arround-bottom.svg" alt="" />
+        </div>
+      </div>
+    </div>
+
+    <!-- ==============menu======================== -->
+    <div class="game-menu">
+      <div class="game-menu-back">
+        <div class="game-menu-arround">
+          <img src="./images/game-menu/arround.svg" alt="" />
+        </div>
+        <span>Назад в лобби</span>
+      </div>
+      <div class="game-menu-wrapper">
+        <span id="wallet-value">0 ₽</span>
+        <div class="game-menu-btn">
+          <div class="game-menu-icon">
+            <img src="./images/game-menu/icons-wallet.svg" alt="" />
+          </div>
+          <span>Пополнить</span>
+        </div>
+      </div>
+    </div>
+    <script>
+      console.clear();
+
+      let size = 2; // The size of the playing field (number of cells in a row/column)
+      let bombFrequency = 0.2; // The frequency of bombs
+      let tileSize = Math.min(
+        (window.innerHeight * 0.42) / 2,
+        (window.innerWidth * 0.9) / 2
+      ); // Cell size
+
+      const board = document.querySelector("#board"); // The playing field
+      let tiles; // The cells of the playing field
+      let boardSize; //The size of the playing field
+
+      const boardSizeBtn = document.querySelectorAll(".size-board-radio"); // selecting the field size
+      const difficultyBtns = document.querySelectorAll(".difficulty-radio"); // The choice of difficulty
+
+      let bombs = []; // Coordinates of the bombs
+      let gameOver = false; // The flag of the end of the game
+
+      // The function of clearing the field and starting a new game
+      const clear = () => {
+        gameOver = false;
+        bombs = [];
+        tiles.forEach((tile) => {
+          tile.remove();
+        });
+
+        setup();
+      };
+
+      // The function of creating a playing field
+      const setup = () => {
+        for (let i = 0; i < Math.pow(size, 2); i++) {
+          const tile = document.createElement("div");
+          tile.classList.add("tile");
+          board.appendChild(tile);
+        }
+        tiles = document.querySelectorAll(".tile");
+
+        boardSize = Math.sqrt(tiles.length);
+        board.style.width = boardSize * tileSize + "px";
+
+        document.documentElement.style.setProperty(
+          "--tileSize",
+          `${tileSize}px`
+        );
+        document.documentElement.style.setProperty(
+          "--boardSize",
+          `${boardSize * tileSize}px`
+        );
+
+        let x = 0;
+        let y = 0;
+        tiles.forEach((tile, i) => {
+          tile.setAttribute("data-tile", `${x},${y}`); // Setting the coordinates of the cell
+
+          // We randomly determine whether there will be a bomb in the cage
+          let random_boolean = Math.random() < bombFrequency;
+          if (random_boolean) {
+            bombs.push(`${x},${y}`); // Adding a bomb
+          }
+
+          x++;
+          if (x >= boardSize) {
+            x = 0;
+            y++;
+          }
+
+          tile.oncontextmenu = function (e) {
+            e.preventDefault();
+          };
+
+          tile.addEventListener("click", function (e) {
+            clickTile(tile);
+          });
+        });
+      };
+
+      // A click handler for a cell
+      const clickTile = (tile) => {
+        if (gameOver) return;
+        if (tile.classList.contains("tile--checked")) return;
+
+        let coordinate = tile.getAttribute("data-tile");
+        if (bombs.includes(coordinate)) {
+          endGame(tile); // If there is a bomb in the cage, we end the game
+        } else {
+          let num = tile.getAttribute("data-tile");
+
+          if (num != null) {
+            tile.classList.add("tile--checked"); // We mark the cell as verified
+            setTimeout(() => {
+              checkVictory(); // Checking the victory
+            }, 100);
+            return;
+          }
+
+          checkTile(tile, coordinate); // We check the neighboring cells
+        }
+        if (!gameOver) tile.classList.add("tile--checked");
+      };
+
+      //End-of-game function
+      const endGame = (tile) => {
+        console.log("💣 Boom! Конец игры.");
+
+        gameOver = true;
+        tiles.forEach((tile) => {
+          let coordinate = tile.getAttribute("data-tile");
+          if (bombs.includes(coordinate)) {
+            tile.classList.add("tile--bomb");
+          }
+        });
+      };
+
+      //The Check for Victory function
+      const checkVictory = () => {
+        let win = true;
+        tiles.forEach((tile) => {
+          let coordinate = tile.getAttribute("data-tile");
+          if (
+            !tile.classList.contains("tile--checked") &&
+            !bombs.includes(coordinate)
+          )
+            win = false;
+        });
+        if (win) {
+          gameOver = true;
+          console.log("Пбеда");
+        }
+      };
+
+      // Starting the game
+      setup();
+
+      // Processing of changing the size of the playing field
+
+      boardSizeBtn.forEach((el) => {
+        el.addEventListener("click", () => {
+          size = el.value;
+          if (size == 2)
+            tileSize = Math.min(
+              (window.innerHeight * 0.42) / 2,
+              (window.innerWidth * 0.9) / 2
+            );
+          if (size == 3)
+            tileSize = Math.min(
+              (window.innerHeight * 0.42) / 3,
+              (window.innerWidth * 0.9) / 3
+            );
+          if (size == 4)
+            tileSize = Math.min(
+              (window.innerHeight * 0.42) / 4,
+              (window.innerWidth * 0.9) / 4
+            );
+          if (size == 5)
+            tileSize = Math.min(
+              (window.innerHeight * 0.42) / 5,
+              (window.innerWidth * 0.9) / 5
+            );
+
+          clear();
+        });
+      });
+
+      // Changing the difficulty
+      difficultyBtns.forEach((btn) => {
+        btn.addEventListener("click", function () {
+          console.log(this.value);
+          bombFrequency = this.value; // Changing the frequency of bombs
+          clear();
+        });
+      });
+    </script>
+  </body>
+</html>
