@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>jetX</title>
+    <style>
+      html,
+      body {
+        font-size: 100%;
+        line-height: 1;
+        -ms-text-size-adjust: 100%;
+        -moz-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+      }
+      *,
+      *:before,
+      *:after {
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+      :focus,
+      :active {
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      a:focus,
+      a:active {
+        outline: none;
+      }
+      a,
+      a:visited {
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: none;
+      }
+      a {
+        color: inherit;
+      }
+      /* ================================================ */
+
+      html {
+        height: 100dvh;
+        overflow: hidden;
+      }
+
+      body {
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        margin: auto;
+        margin: 0;
+        font-family: "Roboto", sans-serif;
+      }
+      img {
+        width: 100%;
+      }
+
+      /* ======================================== */
+
+      @font-face {
+        font-family: "Roboto";
+        src: url("./fonts/Roboto-Bold.ttf") format("truetype");
+        font-weight: 700;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "Roboto";
+        src: url("./fonts/Roboto-Medium.ttf") format("truetype");
+        font-weight: 500;
+        font-style: normal;
+      }
+
+      @font-face {
+        font-family: "Roboto";
+        src: url("./fonts/Roboto-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Poppins";
+        src: url("./fonts/Poppins-Medium.ttf") format("truetype");
+        font-weight: 500;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Inter";
+        src: url("./fonts/Inter-Regular.ttf") format("truetype");
+        font-weight: 400;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: "Inter";
+        src: url("./fonts/Inter-Bold.ttf") format("truetype");
+        font-weight: 700;
+        font-style: normal;
+      }
+
+      /* ============menu================ */
+      .game-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.1vh 3.8vw;
+        background: #28212b;
+      }
+
+      .game-menu-back {
+        display: flex;
+        align-items: center;
+        font-weight: 400;
+        font-size: 3.2vw;
+        line-height: 2.29;
+        letter-spacing: 0.04em;
+        text-align: center;
+        color: #fff;
+      }
+
+      .game-menu-wrapper {
+        display: flex;
+        font-weight: 400;
+        font-size: 3vw;
+        line-height: 2.67;
+        letter-spacing: 0.04em;
+        text-align: center;
+        color: #fff;
+      }
+
+      .game-menu-arround {
+        margin-right: 3.3vw;
+        width: 2.4vw;
+        height: 5.2vw;
+      }
+
+      .game-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2.4vw;
+        margin-left: 2.4vw;
+        border-radius: 3vw;
+        padding: 0px 2.4vw;
+        background: radial-gradient(
+            178.09% 220.16% at 94.89% -132.81%,
+            rgb(255, 122, 0) 67.58895516395569%,
+            rgb(255, 199, 0) 100%
+          ),
+          radial-gradient(
+            137.51% 118.3% at 32.95% 0%,
+            rgb(255, 137, 137) 21.246936917304993%,
+            rgb(255, 169, 106) 88.62413167953491%
+          ),
+          radial-gradient(
+            182.56% 55.34% at 5.68% 100%,
+            rgb(246, 251, 34) 0%,
+            rgb(255, 158, 69) 100%
+          ),
+          radial-gradient(
+            238.39% 44.19% at 96.59% 31.25%,
+            rgb(255, 255, 255) 0%,
+            rgb(255, 255, 255) 100%
+          );
+      }
+
+      .game-menu-icon {
+        width: 5.6vw;
+        height: 5.6vw;
+      }
+
+      /* ==================jetX============================ */
+      .setting-toggle label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3.3vw;
+        font-weight: 500;
+        font-size: 2.8vw;
+        text-align: center;
+        color: #fff;
+      }
+
+      .settings-switcher {
+        margin-right: 3vw;
+        display: inline-block;
+        position: relative;
+        border-radius: 2vh;
+        padding: 0.2vh;
+        width: 5.2vh;
+        height: 2.5vh;
+        background: rgba(255, 255, 255, 0.5);
+        transition: background-color 0.6s ease-in-out;
+      }
+
+      .settings-switcher::before {
+        content: "";
+        position: absolute;
+        top: 12%;
+        left: 0.4vh;
+        display: inline-block;
+        border-radius: 50%;
+        width: 1.8vh;
+        height: 1.8vh;
+        background-color: #fff;
+        transition: left 0.4s ease-in-out;
+      }
+
+      .settings-switcher-checkbox {
+        appearance: none;
+      }
+
+      .settings-switcher:has(.settings-switcher-checkbox:checked)::before {
+        left: 3vh;
+      }
+
+      .settings-switcher:has(.settings-switcher-checkbox:checked) {
+        background: radial-gradient(
+            178.09% 220.16% at 94.89% -132.81%,
+            rgb(255, 122, 0) 67.58895516395569%,
+            rgb(255, 199, 0) 100%
+          ),
+          radial-gradient(
+            137.51% 118.3% at 32.95% 0%,
+            rgb(255, 137, 137) 21.246936917304993%,
+            rgb(255, 169, 106) 88.62413167953491%
+          ),
+          radial-gradient(
+            182.56% 55.34% at 5.68% 100%,
+            rgb(246, 251, 34) 0%,
+            rgb(255, 158, 69) 100%
+          ),
+          radial-gradient(
+            238.39% 44.19% at 96.59% 31.25%,
+            rgb(255, 255, 255) 0%,
+            rgb(255, 255, 255) 100%
+          );
+      }
+
+      /* ================================ */
+      #container-jetx {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 6.6vh;
+        height: 100%;
+        gap: 0.6vh;
+        background: #1c1f24;
+      }
+
+      .jetc-top {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 5.1vh;
+        background: #12151c;
+      }
+
+      .coints-wrappeer {
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.7vw;
+        font-weight: 900;
+        font-size: 3.3vw;
+        text-align: center;
+        color: #ffdd14;
+      }
+
+      .img-coints {
+        width: 2.7vh;
+        height: 2.5vh;
+      }
+
+      .img-close {
+        margin-right: 2.4vw;
+        width: 3.6vh;
+        height: 3.6vh;
+      }
+
+      #history-coefficient {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2vw;
+      }
+
+      .history-coefficient-item {
+        border-radius: 0.6vh;
+        width: 11.5vw;
+        height: 2.5vh;
+        background: #12151c;
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        font-size: 2.8vw;
+        line-height: 200%;
+        letter-spacing: 0.01em;
+        text-align: center;
+        color: #ffdd14;
+      }
+
+      .coefficient-lost {
+        color: #da294a;
+      }
+
+      .coefficient-received {
+        color: #3ad963;
+      }
+
+      #canvas {
+        width: 100%;
+        /* height: 25.7vh; */
+      }
+
+      .bet-setting {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 0.6vh;
+        width: 97%;
+        height: 5.1vh;
+        background: #191c25;
+      }
+
+      #bet-value {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 11px;
+        border-radius: 0.6vh;
+        width: 4.2vh;
+        height: 3.7vh;
+        background: #2d2f3b;
+        font-weight: 900;
+        font-size: 2.6vw;
+        text-align: center;
+        color: #ffdd14;
+      }
+
+      .bet-wrapper {
+        border-radius: 0.6vh;
+        padding: 1.2vh 1.6vw;
+        width: 97%;
+        background: #191c25;
+      }
+
+      .bet {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.7vw;
+      }
+
+      .bet:not(:last-child) {
+        margin-bottom: 1.3vh;
+      }
+
+      .amount-wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 49%;
+      }
+
+      .amount-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.4vh;
+        border-radius: 0.6vh;
+        padding: 0px 3.5vw;
+        width: 100%;
+        height: 5.2vh;
+        background: #0d0d15;
+      }
+
+      .img-minus {
+        width: 1.8vh;
+        height: 1.8vh;
+      }
+
+      .amount-value {
+        font-family: "Roboto", sans-serif;
+        font-weight: 500;
+        font-size: 2.2vh;
+        text-align: center;
+        color: #fff853;
+      }
+
+      .img-plus {
+        width: 1.8vh;
+        height: 1.8vh;
+      }
+
+      .amount-btns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6vh;
+      }
+
+      .amount-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.6vh;
+        width: 48%;
+        height: 4vh;
+        background: #2d2f3b;
+        font-weight: 600;
+        font-size: 3.3vw;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .multiplier-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 49%;
+      }
+
+      .multiplier-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.4vh;
+        border-radius: 0.6vh;
+        padding: 0px 3.5vw;
+        width: 100%;
+        height: 5.2vh;
+        background: #0d0d15;
+      }
+
+      .multiplier-value {
+        font-weight: 500;
+        font-size: 4.2vw;
+        text-align: center;
+        color: #fff853;
+      }
+
+      .multiplier-value span {
+        font-weight: 900;
+      }
+
+      .multiplier-bnt {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 1vh;
+        border-radius: 0.6vh;
+        width: 100%;
+        height: 8.8vh;
+        background: #ffdd14;
+        font-weight: 900;
+        font-size: 5.1vw;
+        line-height: 68%;
+        text-align: center;
+        color: #000;
+      }
+
+      .multiplier-btn-value span {
+        font-size: 4.6vw;
+      }
+
+      .content {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      .content-title {
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-size: 2.4vw;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .content-title-start {
+        margin-right: auto;
+      }
+
+      .players-header {
+        display: grid;
+        grid-template-columns: 1.5fr repeat(3, 1fr);
+        align-items: center;
+        margin-bottom: 0.6vh;
+        border-radius: 0.6px 0.6px 0 0;
+        padding: 0px 3vw;
+        width: 97%;
+        height: 3.3vh;
+        background: #191c25;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-size: 2.3vw;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .players-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
+        overflow-y: scroll;
+        height: 10vh;
+        width: 97%;
+        margin: 0 auto;
+      }
+
+      .user {
+        display: grid;
+        grid-template-columns: 1.5fr repeat(3, 1fr);
+        align-items: center;
+        flex-shrink: 0;
+        padding: 0px 3vw;
+        width: 100%;
+        height: 3.4vh;
+        background: #2d2f3b;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-size: 2.4vw;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .user-color {
+        background: linear-gradient(
+          90deg,
+          rgba(58, 217, 99, 0.15) 0%,
+          rgba(25, 28, 37, 0.15) 100%
+        );
+        color: #3ad963;
+      }
+
+      .user-name {
+        margin-right: auto;
+      }
+
+      .user-bet span {
+        font-weight: 700;
+      }
+
+      .user-take {
+      }
+
+      .user-win {
+      }
+
+      .histori-header {
+        display: grid;
+        grid-template-columns: 1.5fr repeat(3, 1fr);
+        align-items: center;
+        margin-bottom: 0.6vh;
+        border-radius: 0.6px 0.6px 0 0;
+        padding: 0px 3vw;
+        width: 97%;
+        height: 3.3vh;
+        background: #191c25;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-size: 2.3vw;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .histori-body {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: start;
+        overflow-y: scroll;
+        height: 10vh;
+        width: 97%;
+        margin: 0 auto;
+      }
+
+      .histori-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.6vh;
+        width: 20%;
+        height: 3vh;
+        background: linear-gradient(
+          90deg,
+          rgba(218, 41, 74, 0.2) 0%,
+          rgba(25, 28, 37, 0.2) 100%
+        );
+        font-family: "Poppins", sans-serif;
+        font-weight: 500;
+        font-size: 2.8vw;
+        line-height: 200%;
+        letter-spacing: 0.01em;
+        text-align: center;
+        color: #da294a;
+      }
+
+      .histori-received {
+        background: linear-gradient(
+          90deg,
+          rgba(94, 202, 101, 0.2) 0%,
+          rgba(25, 28, 37, 0.2) 100%
+        );
+        color: #3ad963;
+      }
+
+      .my-bet-header {
+        display: grid;
+        grid-template-columns: 1.5fr repeat(4, 1fr);
+        align-items: center;
+        margin-bottom: 0.6vh;
+        border-radius: 0.6px 0.6px 0 0;
+        padding: 0px 3vw;
+        width: 97%;
+        height: 3.3vh;
+        background: #191c25;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-size: 2.3vw;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .my-bet-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
+        overflow-y: scroll;
+        height: 10vh;
+        width: 97%;
+        margin: 0 auto;
+      }
+
+      .my-bet {
+        display: grid;
+        grid-template-columns: 1.5fr repeat(4, 1fr);
+        align-items: center;
+        flex-shrink: 0;
+        padding: 0px 3vw;
+        width: 100%;
+        height: 3.4vh;
+        background: #2d2f3b;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-size: 2.4vw;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .my-bet-color {
+        background: linear-gradient(
+          90deg,
+          rgba(58, 217, 99, 0.15) 0%,
+          rgba(25, 28, 37, 0.15) 100%
+        );
+        color: #3ad963;
+      }
+
+      .my-bet-time {
+        margin-right: auto;
+      }
+
+      .my-bet-explosion {
+      }
+      .my-bet-bet {
+      }
+      .my-bet-take {
+      }
+      .my-bet-win {
+      }
+
+      .statistics-header {
+        display: grid;
+        grid-template-columns: 1.5fr repeat(3, 1fr);
+        align-items: center;
+        margin-bottom: 0.6vh;
+        border-radius: 0.6px 0.6px 0 0;
+        padding: 0px 3vw;
+        width: 97%;
+        height: 3.3vh;
+        background: #191c25;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-size: 2.3vw;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .statistics-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
+        overflow-y: scroll;
+        height: 10vh;
+        width: 97%;
+        margin: 0 auto;
+      }
+
+      .statistics {
+        display: grid;
+        grid-template-columns: 1.5fr repeat(3, 1fr);
+        align-items: center;
+        flex-shrink: 0;
+        padding: 0px 3vw;
+        width: 100%;
+        height: 3.4vh;
+        background: #2d2f3b;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        font-size: 2.4vw;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .statistics-color {
+        background: linear-gradient(
+          90deg,
+          rgba(58, 217, 99, 0.15) 0%,
+          rgba(25, 28, 37, 0.15) 100%
+        );
+        color: #3ad963;
+      }
+
+      .statistics-name {
+        margin-right: auto;
+      }
+
+      .statistics-bet {
+      }
+      .statistics-take {
+      }
+      .statistics-win {
+      }
+
+      .tabs {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2vw;
+        width: 100%;
+        background: #000;
+      }
+
+      .tab-inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6.6vw;
+        font-family: "Inter", sans-serif;
+        font-weight: 700;
+        font-size: 2.8vw;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .tab {
+        position: relative;
+        padding: 1.5vh 0;
+        border-bottom: 4px solid #000;
+      }
+
+      .tab-activ {
+        color: #ffdd14;
+        border-bottom: 4px solid #ffdd14;
+      }
+
+      .setting-btn {
+        width: 2.5vh;
+        height: 2.5vh;
+      }
+
+      .content-show {
+        display: flex;
+      }
+
+      .tab-wrapper {
+        width: 100%;
+      }
+
+      /* =====================modal======================== */
+      .modal-menu {
+        position: fixed;
+        bottom: 11.5vh;
+        right: 0;
+        display: none;
+        border-radius: 0.6vh;
+        padding: 0.4vh;
+        width: 44%;
+        background: #191c25;
+        font-family: "Inter", sans-serif;
+        font-weight: 700;
+        font-size: 2.9vw;
+        text-align: center;
+        color: #fff;
+      }
+
+      .modal-menu-show {
+        display: block;
+      }
+
+      .modal-menu-setting {
+        margin-bottom: 0.4vh;
+        border-radius: 0.6vh;
+        padding: 1.2vh;
+        background: #2d2f3b;
+      }
+
+      .modal-setting-item {
+        display: flex;
+        align-items: center;
+        justify-content: start;
+      }
+
+      .modal-setting-item:not(:last-child) {
+        margin-bottom: 2vh;
+      }
+
+      .modal-setting-img {
+        margin-right: 0.4vh;
+        width: 2vh;
+        height: 2vh;
+      }
+
+      .modal-setting-text {
+        margin-right: auto;
+      }
+
+      .modal-menu-info {
+        border-radius: 0.6vh;
+        padding: 1.2vh;
+        background: #2d2f3b;
+      }
+
+      .modal-info-item {
+        display: flex;
+        align-items: center;
+        justify-content: start;
+      }
+
+      .modal-info-item:not(:last-child) {
+        margin-bottom: 2.3vh;
+      }
+
+      .modal-info-img {
+        margin-right: 0.4vh;
+        width: 2vh;
+        height: 2vh;
+      }
+
+      .modal-info-text {
+      }
+
+      .modal-rules {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        display: none;
+        transform: translate(-50%, -50%);
+        width: 97%;
+        height: 98%;
+        background: #191c25;
+      }
+
+      .modal-rules-show {
+        display: block;
+      }
+
+      .modal-rules-top {
+        margin-bottom: 2vh;
+        padding: 1vh;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #1c1f24;
+      }
+
+      .modal-rules-title {
+        font-weight: 700;
+        font-size: 2.4vw;
+        text-align: center;
+        color: #fff;
+      }
+
+      .modal-rules-close {
+        width: 30px;
+        height: 30px;
+      }
+
+      .modal-rules-content {
+      }
+
+      .accordion-list {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+
+      .accordion-list__item {
+        padding: 1vh;
+        margin-bottom: 2vh;
+        width: 90%;
+        border: 0.1vh solid #2d2f3b;
+      }
+
+      .accordion-list__content {
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.6s;
+        font-size: 2.6vw;
+        color: #efefef;
+      }
+
+      .accordion-list__control-title {
+        font-size: 2.9vw;
+        line-height: 1.23;
+        letter-spacing: 0.01em;
+        color: #2d2f3b;
+      }
+
+      .accordion-list__item--opened .accordion-list__control-title {
+        color: #ffdd14;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container-jetx">
+      <div class="jetc-top">
+        <div class="coints-wrappeer">
+          <div class="img-coints">
+            <img src="./images/money.svg" alt="" />
+          </div>
+          <span id="balance-value">0.00₽</span>
+        </div>
+        <div class="img-close">
+          <img src="./images/close.svg" alt="" />
+        </div>
+      </div>
+      <div id="history-coefficient">
+        <div class="history-coefficient-item coefficient-lost">1.00x</div>
+        <div class="history-coefficient-item coefficient-received">1.00x</div>
+        <div class="history-coefficient-item">1.00x</div>
+        <div class="history-coefficient-item coefficient-lost">1.00x</div>
+        <div class="history-coefficient-item coefficient-lost">1.00x</div>
+        <div class="history-coefficient-item coefficient-received">1.00x</div>
+      </div>
+      <div id="canvas">
+        <img src="./images/canvas.svg" alt="" />
+      </div>
+      <div class="bet-setting">
+        <div id="bet-value">X2</div>
+        <div class="setting-toggle">
+          <label>
+            АВТОСТАВКА
+            <span class="settings-switcher">
+              <input
+                class="settings-switcher-checkbox"
+                type="checkbox"
+                data-price="swticher"
+              />
+            </span>
+          </label>
+        </div>
+        <div class="setting-toggle">
+          <label>
+            АВТОВЗЯТЬ
+            <span class="settings-switcher">
+              <input
+                class="settings-switcher-checkbox"
+                type="checkbox"
+                data-price="swticher"
+              />
+            </span>
+          </label>
+        </div>
+      </div>
+      <div class="bet-wrapper">
+        <div class="bet">
+          <div class="amount-wrapper">
+            <div class="amount-inner">
+              <div class="img-minus">
+                <img src="./images/minus.svg" alt="" />
+              </div>
+              <span class="amount-value">200.00</span>
+              <div class="img-plus">
+                <img src="./images/plus.svg" alt="" />
+              </div>
+            </div>
+            <div class="amount-btns">
+              <div class="amount-btn">500.00</div>
+              <div class="amount-btn">500.00</div>
+              <div class="amount-btn">500.00</div>
+              <div class="amount-btn">500.00</div>
+            </div>
+          </div>
+          <div class="multiplier-wrapper">
+            <div class="multiplier-inner">
+              <div class="img-minus">
+                <img src="./images/minus.svg" alt="" />
+              </div>
+              <span class="multiplier-value">2.00<span>x</span></span>
+              <div class="img-plus">
+                <img src="./images/plus.svg" alt="" />
+              </div>
+            </div>
+            <div class="multiplier-bnt">
+              <span class="multiplier-btn-value">200.00<span>₽</span></span>
+              <span>СТАВКА</span>
+            </div>
+          </div>
+        </div>
+        <div class="bet">
+          <div class="amount-wrapper">
+            <div class="amount-inner">
+              <div class="img-minus">
+                <img src="./images/minus.svg" alt="" />
+              </div>
+              <span class="amount-value">200.00</span>
+              <div class="img-plus">
+                <img src="./images/plus.svg" alt="" />
+              </div>
+            </div>
+            <div class="amount-btns">
+              <div class="amount-btn">500.00</div>
+              <div class="amount-btn">500.00</div>
+              <div class="amount-btn">500.00</div>
+              <div class="amount-btn">500.00</div>
+            </div>
+          </div>
+          <div class="multiplier-wrapper">
+            <div class="multiplier-inner">
+              <div class="img-minus">
+                <img src="./images/minus.svg" alt="" />
+              </div>
+              <span class="multiplier-value">2.00<span>x</span></span>
+              <div class="img-plus">
+                <img src="./images/plus.svg" alt="" />
+              </div>
+            </div>
+            <div class="multiplier-bnt">
+              <span class="multiplier-btn-value">200.00<span>₽</span></span>
+              <span>СТАВКА</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-wrapper">
+        <div class="tab-content">
+          <div class="content" data-id="0">
+            <div class="players-header">
+              <div class="content-title content-title-start">Пользователь</div>
+              <div class="content-title">Ставка</div>
+              <div class="content-title">Взять</div>
+              <div class="content-title">Выигрыш</div>
+            </div>
+            <div class="players-body">
+              <div class="user user-color">
+                <span class="user-name">5****5</span>
+                <span class="user-bet">15.00<span>₽</span></span>
+                <span class="user-take">1.00x</span>
+                <span class="user-win">15.00₽</span>
+              </div>
+              <div class="user">
+                <span class="user-name">5****5</span>
+                <span class="user-bet">15.00<span>₽</span></span>
+                <span class="user-take">1.00x</span>
+                <span class="user-win">15.00₽</span>
+              </div>
+              <div class="user user-color">
+                <span class="user-name">5****5</span>
+                <span class="user-bet">15.00<span>₽</span></span>
+                <span class="user-take">1.00x</span>
+                <span class="user-win">15.00₽</span>
+              </div>
+              <div class="user user-color">
+                <span class="user-name">5****5</span>
+                <span class="user-bet">15.00<span>₽</span></span>
+                <span class="user-take">1.00x</span>
+                <span class="user-win">15.00₽</span>
+              </div>
+              <div class="user user-color">
+                <span class="user-name">5****5</span>
+                <span class="user-bet">15.00<span>₽</span></span>
+                <span class="user-take">1.00x</span>
+                <span class="user-win">15.00₽</span>
+              </div>
+            </div>
+          </div>
+          <div class="content content-show" data-id="1">
+            <div class="histori-header">
+              <div class="content-title content-title-start">История</div>
+            </div>
+            <div class="histori-body">
+              <div class="histori-item histori-received">1.00x</div>
+              <div class="histori-item">1.00x</div>
+              <div class="histori-item histori-received">1.00x</div>
+              <div class="histori-item">1.00x</div>
+              <div class="histori-item histori-received">1.00x</div>
+              <div class="histori-item">1.00x</div>
+              <div class="histori-item histori-received">1.00x</div>
+              <div class="histori-item">1.00x</div>
+              <div class="histori-item">1.00x</div>
+              <div class="histori-item">1.00x</div>
+              <div class="histori-item histori-received">1.00x</div>
+              <div class="histori-item">1.00x</div>
+              <div class="histori-item histori-received">1.00x</div>
+              <div class="histori-item">1.00x</div>
+              <div class="histori-item histori-received">1.00x</div>
+            </div>
+          </div>
+          <div class="content" data-id="2">
+            <div class="my-bet-header">
+              <div class="content-title content-title-start">Время</div>
+              <div class="content-title">Взрыв</div>
+              <div class="content-title">Ставка</div>
+              <div class="content-title">Взять</div>
+              <div class="content-title">Выигрыш</div>
+            </div>
+            <div class="my-bet-body">
+              <div class="my-bet">
+                <span class="my-bet-time">00:00</span>
+                <span class="my-bet-explosion">1.00x</span>
+                <span class="my-bet-bet">100<span>₽</span></span>
+                <span class="my-bet-take">--</span>
+                <span class="my-bet-win">0₽</span>
+              </div>
+              <div class="my-bet my-bet-color">
+                <span class="my-bet-time">00:00</span>
+                <span class="my-bet-explosion">1.00x</span>
+                <span class="my-bet-bet">100<span>₽</span></span>
+                <span class="my-bet-take">--</span>
+                <span class="my-bet-win">0₽</span>
+              </div>
+            </div>
+          </div>
+          <div class="content" data-id="3">
+            <div class="statistics-header">
+              <div class="content-title content-title-start">Пользователь</div>
+              <div class="content-title">Ставка</div>
+              <div class="content-title">Взять</div>
+              <div class="content-title">Выигрыш</div>
+            </div>
+            <div class="statistics-body">
+              <div class="statistics">
+                <span class="statistics-name">5****5</span>
+                <span class="statistics-bet">15.00<span>₽</span></span>
+                <span class="statistics-take">--</span>
+                <span class="statistics-win">15.00₽</span>
+              </div>
+              <div class="statistics statistics-color">
+                <span class="statistics-name">5****5</span>
+                <span class="statistics-bet">--<span>₽</span></span>
+                <span class="statistics-take">1.00x</span>
+                <span class="statistics-win">15.00₽</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tabs">
+          <div class="tab-inner">
+            <div class="tab" data-target-id="0">Игроки</div>
+            <div class="tab tab-activ" data-target-id="1">История</div>
+            <div class="tab" data-target-id="2">Мои Ставки</div>
+            <iv class="tab" data-target-id="3">Статистика</iv>
+          </div>
+          <div class="setting-btn">
+            <img src="./images/menu.svg" alt="" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- =====================modal================== -->
+    <div class="modal-menu">
+      <div class="modal-menu-setting">
+        <div class="modal-setting-item">
+          <div class="modal-setting-img">
+            <img src="./images/sound.svg" alt="" />
+          </div>
+          <span class="modal-setting-text">ЗВУК</span>
+          <div class="setting-toggle">
+            <label>
+              <span class="settings-switcher">
+                <input
+                  class="settings-switcher-checkbox"
+                  type="checkbox"
+                  data-price="swticher"
+                />
+              </span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-setting-item">
+          <div class="modal-setting-img">
+            <img src="./images/sound-all.svg" alt="" />
+          </div>
+          <span class="modal-setting-text">ВСЕ</span>
+          <div class="setting-toggle">
+            <label>
+              <span class="settings-switcher">
+                <input
+                  class="settings-switcher-checkbox"
+                  type="checkbox"
+                  data-price="swticher"
+                />
+              </span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-setting-item">
+          <div class="modal-setting-img">
+            <img src="./images/sound-music.svg" alt="" />
+          </div>
+          <span class="modal-setting-text">МУЗЫКА</span>
+          <div class="setting-toggle">
+            <label>
+              <span class="settings-switcher">
+                <input
+                  class="settings-switcher-checkbox"
+                  type="checkbox"
+                  data-price="swticher"
+                />
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-menu-info">
+        <div class="modal-info-item">
+          <div class="modal-info-img">
+            <img src="./images/how-to-play.svg" alt="" />
+          </div>
+          <span class="modal-info-text">КАК ИГРАТЬ</span>
+        </div>
+        <div class="modal-info-item">
+          <div class="modal-info-img">
+            <img src="./images/info_alt_light.svg" alt="" />
+          </div>
+          <span id="modal-info-btn" class="modal-info-text">ПРАВИЛА</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-rules">
+      <div class="modal-rules-top">
+        <span class="modal-rules-title">ПРАВИЛА</span>
+        <div class="modal-rules-close">
+          <img src="./images/close.svg" alt="" />
+        </div>
+      </div>
+      <div class="modal-rules-content">
+        <div class="accordion-list">
+          <div class="accordion-list__item">
+            <a class="accordion-list__control" href="batton">
+              <h3 class="accordion-list__control-title">
+                Снизить количество ошибок
+              </h3>
+              <div class="accordion-list__control-icon"></div>
+            </a>
+            <div class="accordion-list__content">
+              <div class="accordion-content">
+                Перспективные изображения являются неотъемлемой частью пакета
+                документов АР, используются в ходе проведения ремонтных работ и
+                необходимы при авторском надзоре
+              </div>
+            </div>
+          </div>
+          <div class="accordion-list__item">
+            <a class="accordion-list__control" href="batton">
+              <h3 class="accordion-list__control-title">
+                Согласовать проект с заказчиком
+              </h3>
+              <div class="accordion-list__control-icon"></div>
+            </a>
+            <div class="accordion-list__content">
+              <div class="accordion-content">
+                Фотореалистичные 3D-визуализации в разы повышают качество и
+                скорость координации и согласований с заказчиком.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ==============menu======================== -->
+    <div class="game-menu">
+      <div class="game-menu-back">
+        <div class="game-menu-arround">
+          <img src="./images/game-menu/arround.svg" alt="" />
+        </div>
+        <span>Назад в лобби</span>
+      </div>
+      <div class="game-menu-wrapper">
+        <span id="wallet-value">0 ₽</span>
+        <div class="game-menu-btn">
+          <div class="game-menu-icon">
+            <img src="./images/game-menu/icons-wallet.svg" alt="" />
+          </div>
+          <span>Пополнить</span>
+        </div>
+      </div>
+    </div>
+    <script>
+      const showTab = (elTabBtn) => {
+        const elTab = elTabBtn.closest(".tab-wrapper");
+        console.log(elTab);
+        if (elTabBtn.classList.contains("tab-activ")) {
+          return;
+        }
+        const targetId = elTabBtn.dataset.targetId;
+        const elTabPane = elTab.querySelector(
+          `.content[data-id="${targetId}"]`
+        );
+        console.log(targetId);
+
+        if (elTabPane) {
+          const elTabBtnActive = elTab.querySelector(".tab-activ");
+          elTabBtnActive.classList.remove("tab-activ");
+          const elTabPaneShow = elTab.querySelector(".content-show");
+          elTabPaneShow.classList.remove("content-show");
+          console.log(elTabBtn);
+          console.log(elTabPane);
+          elTabBtn.classList.add("tab-activ");
+          elTabPane.classList.add("content-show");
+        }
+      };
+
+      document.addEventListener("click", (e) => {
+        if (e.target && !e.target.closest(".tab")) {
+          return;
+        }
+        const elTabBtn = e.target.closest(".tab");
+        showTab(elTabBtn);
+      });
+
+      const menuModalBtn = document.querySelector(".setting-btn");
+      const menuModal = document.querySelector(".modal-menu");
+      menuModalBtn.addEventListener("click", () => {
+        menuModal.classList.toggle("modal-menu-show");
+      });
+
+      const rulesClose = document.querySelector(".modal-rules-close");
+      const rulesModalBtn = document.querySelector("#modal-info-btn");
+      const rulesModal = document.querySelector(".modal-rules");
+      rulesClose.addEventListener("click", () => {
+        rulesModal.classList.remove("modal-rules-show");
+      });
+      rulesModalBtn.addEventListener("click", () => {
+        rulesModal.classList.add("modal-rules-show");
+      });
+      // Аккордион
+      const accordionLists = document.querySelectorAll(".accordion-list");
+
+      accordionLists.forEach((el) => {
+        el.addEventListener("click", (e) => {
+          const accordionList = e.currentTarget;
+          const accordionOpendItem = accordionList.querySelector(
+            ".accordion-list__item--opened"
+          );
+          const accordionOpendContent = accordionList.querySelector(
+            ".accordion-list__item--opened .accordion-list__content"
+          );
+
+          const accordionControl = e.target.closest(".accordion-list__control");
+          if (!accordionControl) return;
+          e.preventDefault();
+
+          const accordionItem = accordionControl.parentElement;
+          const accordionContent = accordionControl.nextElementSibling;
+
+          if (accordionOpendItem && accordionItem != accordionOpendItem) {
+            accordionOpendContent.style.maxHeight = null;
+            accordionOpendItem.classList.remove("accordion-list__item--opened");
+          }
+          accordionItem.classList.toggle("accordion-list__item--opened");
+
+          if (
+            accordionItem.classList.contains("accordion-list__item--opened")
+          ) {
+            accordionContent.style.maxHeight =
+              accordionContent.scrollHeight + "px";
+          } else {
+            accordionContent.style.maxHeight = null;
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
