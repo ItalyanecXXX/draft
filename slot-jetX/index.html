@@ -318,7 +318,7 @@
 
       #canvas {
         width: 100%;
-        /* height: 25.7vh; */
+        height: 25.7vh;
       }
 
       .bet-setting {
@@ -935,6 +935,7 @@
         color: #ffdd14;
       }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
   </head>
   <body>
     <div id="container-jetx">
@@ -958,7 +959,7 @@
         <div class="history-coefficient-item coefficient-received">1.00x</div>
       </div>
       <div id="canvas">
-        <img src="./images/canvas.svg" alt="" />
+        <!-- <img src="./images/canvas.svg" alt="" /> -->
       </div>
       <div class="bet-setting">
         <div id="bet-value">X2</div>
@@ -1395,6 +1396,850 @@
           }
         });
       });
+
+      // =====================PIXI============
+
+      const canvasDiv = document.getElementById("canvas");
+      let backgroundColor = 0xe28da5;
+      const app = new PIXI.Application({
+        resizeTo: canvasDiv, // Размер соответствует контейнеру
+        backgroundColor: backgroundColor, //  фон
+      });
+
+      canvasDiv.appendChild(app.view);
+      // Включаем сортировку по zIndex
+      app.stage.sortableChildren = true;
+
+      const basePath =
+        "./images/geme-frame/rocket-fire/8f515bb53d1f46e3eb5f0ba91820cc65hc5RB1XPT5v96WRt-";
+      for (let i = 0; i <= 8; i++) {
+        const path = `${basePath}${i}.png`;
+        app.loader.add(path);
+      }
+
+      const basePathPlanet = "./images/geme-frame/planet/";
+      for (let i = 1; i <= 10; i++) {
+        const path = `${basePathPlanet}${i}.png`;
+        app.loader.add(path);
+      }
+
+      const basePathPlanet2 = "./images/geme-frame/planet2/";
+      for (let i = 1; i <= 10; i++) {
+        const path = `${basePathPlanet2}${i}.png`;
+        app.loader.add(path);
+      }
+
+      app.loader
+        // .add("canvas", "./images/geme-frame/canvas.jpg")
+        .add("plane", "./images/geme-frame/plane.png")
+        .add("road", "./images/geme-frame/Road.png")
+        .add("сlouds1", "./images/geme-frame/Clouds1.png")
+        .add("сlouds2", "./images/geme-frame/Clouds2.png")
+        .add("ozone", "./images/geme-frame/Ozone.png")
+        .add("stars", "./images/geme-frame/Stars.png")
+        .add("stars2", "./images/geme-frame/StarsWhite.png")
+        .add("fence", "./images/geme-frame/Fence.png")
+        .add("ocean", "./images/geme-frame/Ocean.png")
+        .add("airport", "./images/geme-frame/Airport.png")
+        .add("garage", "./images/geme-frame/Garage.png")
+        .add("landingGearLeft", "./images/geme-frame/PlaneWheel1.png")
+        .add("landingGearRight", "./images/geme-frame/PlaneWheel2.png")
+        .add("parachute1", "./images/geme-frame/Parachute1.png")
+        .add("parachute0", "./images/geme-frame/Parachute0.png")
+        .add("AirBalloon1", "./images/geme-frame/AirBalloon1.png")
+        .add("AirBalloon2", "./images/geme-frame/AirBalloon2.png")
+        .add("satellite1", "./images/geme-frame/satellites/satellite1.png")
+        .add("satellite2", "./images/geme-frame/satellites/satellite2.png")
+
+        .load(startGame);
+
+      function startGame() {
+        //Класс самолета
+        class Airplane {
+          constructor(
+            texture,
+            app,
+            parallax,
+            introObjects,
+            landingGearLTexture,
+            landingGearRTexture,
+            fireFrames,
+            parallaxLayer,
+            betManager
+          ) {
+            this.app = app;
+            this.parallax = parallax; // Ссылка на параллакс
+            this.introObjects = introObjects; // Ссылка на начальные объекты
+
+            // Создаем спрайт самолета
+            this.sprite = new PIXI.Sprite(texture);
+            this.sprite.anchor.set(0, 0.5); // Центрирование
+            this.sprite.x = app.screen.width * 0.05;
+            this.sprite.y = app.screen.height - 50; // Начальная позиция
+            this.sprite.scale.set(0.5); // Масштабирование
+
+            // Скорость и ускорение
+            this.velocity = { x: 0, y: 0 };
+            this.acceleration = { x: 0, y: 0 };
+            this.takingOff = false; // Флаг начала взлета
+
+            // Добавляем самолет на сцену
+            this.sprite.zIndex = 10;
+            this.app.stage.addChild(this.sprite);
+
+            // Создаем шасси
+            this.landingGear = new LandingGear(
+              app,
+              landingGearLTexture,
+              landingGearRTexture,
+              this.sprite
+            );
+
+            // Создаем огонь двигателя
+            this.engineFire = new EngineFire(app, fireFrames, this.sprite);
+
+            // Создаем диагональный параллакс
+            this.diagonalParallax = parallaxLayer;
+            this.betManager = betManager;
+
+            // Подключаем тикер для обновления
+            this.app.ticker.add(() => this.update());
+          }
+
+          // Начало движения
+          start() {
+            if (!this.isMoving) {
+              this.isMoving = true;
+              this.acceleration.x = 0.002; // Ускорение по горизонтали
+              this.engineFire.start(); // Включаем анимацию огня
+              this.betManager.start();
+            }
+          }
+
+          // Обновление самолета
+          update() {
+            if (this.isMoving) {
+              this.takingOff = true;
+
+              // Обновляем позицию и скорость
+              this.velocity.x += this.acceleration.x;
+              this.sprite.x += this.velocity.x;
+
+              // Обновляем огонь двигателя
+              this.engineFire.update();
+
+              // Обновляем позицию шасси
+              this.landingGear.updatePosition();
+
+              // Проверяем, достиг ли самолет центра экрана по оси X
+              if (this.sprite.x >= this.app.screen.width / 4) {
+                this.parallax.startTakeOff(); // Увеличиваем скорость параллакса
+                this.landingGear.retract(); // Убираем шасси при взлете
+                this.acceleration.y = -0.003; // Добавляем ускорение по Y для взлета
+                this.velocity.y += this.acceleration.y;
+                this.sprite.y += this.velocity.y;
+
+                // Поворот самолета
+                this.sprite.rotation = Math.atan2(
+                  this.velocity.y,
+                  this.velocity.x
+                );
+
+                // Поворачиваем огонь двигателя вместе с самолетом
+                this.engineFire.setRotation(this.sprite.rotation);
+              }
+
+              // Останавливаем самолет, если он достиг определенной высоты
+              if (this.sprite.y <= this.app.screen.height / 2) {
+                this.isMoving = false; // Останавливаем движение
+                this.stop();
+                this.parallax.moveOut();
+                this.diagonalParallax.start(); // Включаем диагональный параллакс
+              }
+
+              // Запускаем параллакс и движение объектов при взлете
+              if (this.takingOff) {
+                this.parallax.start();
+                this.introObjects.startMoving();
+              }
+            }
+          }
+
+          stop() {
+            this.velocity.x = 0;
+            this.velocity.y = 0;
+          }
+        }
+
+        //Класс фона с эфектом поралакса
+        class Parallax {
+          constructor(app, layersConfig) {
+            this.app = app;
+            this.layers = [];
+            this.isActive = false; // Флаг движения
+            this.isMovingOut = false; // Флаг движения вниз и влево
+
+            layersConfig.forEach(({ texture, speed, yPosition, scale }) => {
+              const layer = new PIXI.TilingSprite(
+                texture,
+                app.screen.width,
+                app.screen.height
+              );
+              layer.tilePosition.x = 0;
+              layer.tilePosition.y = 0;
+
+              // Устанавливаем скорость и позицию по Y
+              layer.speed = speed;
+              layer.y = yPosition;
+              layer.scale.y = scale;
+
+              this.layers.push(layer);
+              app.stage.addChild(layer);
+            });
+          }
+
+          // Метод для запуска движения
+          start() {
+            this.isActive = true;
+          }
+
+          // Метод для остановки движения
+          stop() {
+            this.isActive = false;
+          }
+
+          // Метод для обновления позиций слоев
+          update() {
+            if (this.isActive) {
+              this.layers.forEach((layer) => {
+                layer.tilePosition.x -= layer.speed; // Двигаем каждый слой с разной скоростью
+              });
+            }
+
+            // Если включен режим скрытия, двигаем параллакс вниз и влево
+            if (this.isMovingOut) {
+              this.layers.forEach((layer) => {
+                // layer.x -= layer.speed; // Движение влево
+                layer.y += layer.speed; // Движение вниз
+              });
+
+              // Проверяем, все ли слои вышли за границы экрана
+              const isOutOfBounds = this.layers.every(
+                (layer) => layer.y > this.app.screen.height
+              );
+
+              if (isOutOfBounds) {
+                this.isMovingOut = false; // Останавливаем движение после полного скрытия
+                this.isActive = false;
+              }
+            }
+          }
+
+          // Метод для плавного увеличения скорости (например, при взлете)
+          startTakeOff() {
+            this.layers.forEach((layer) => {
+              layer.speed += 0.005; // Увеличиваем скорость при взлете
+            });
+          }
+
+          // Метод для перемещения параллакса вниз и влево
+          moveOut() {
+            this.isMovingOut = true;
+            // this.isActive = false; // Отключаем стандартное движение
+          }
+        }
+        //Класс декор объектов
+        class IntroObjects {
+          constructor(app, textures) {
+            this.app = app;
+
+            // Создаем массив объектов
+            this.objects = textures.map(({ texture, x, y, scale }) => {
+              const object = new PIXI.Sprite(texture);
+              object.anchor.set(0.5);
+              object.scale.set(scale);
+              object.x = x;
+              object.y = y;
+              this.app.stage.addChild(object);
+              return object;
+            });
+
+            this.isMoving = false; // Флаг движения объектов
+            this.speed = 1.5; // Скорость движения объектов
+          }
+
+          // Запуск движения объектов влево
+          startMoving() {
+            this.isMoving = true;
+          }
+
+          // Обновление позиции объектов
+          update() {
+            if (this.isMoving) {
+              this.objects.forEach((object, index) => {
+                object.x -= this.speed; // Двигаем объект влево
+
+                // Удаляем объект, если он полностью скрыт за экраном
+                if (object.x + object.width < 0) {
+                  this.app.stage.removeChild(object);
+                  this.objects.splice(index, 1);
+                }
+              });
+
+              // Останавливаем обновление, если все объекты удалены
+              if (this.objects.length === 0) {
+                this.isMoving = false;
+              }
+            }
+          }
+        }
+        //Класс шасси
+        class LandingGear {
+          constructor(app, textureL, textureR, airplaneSprite) {
+            this.app = app;
+            this.airplaneSprite = airplaneSprite; // Ссылка на самолет
+
+            // Создаем два спрайта шасси
+            this.leftGear = new PIXI.Sprite(textureL);
+            this.rightGear = new PIXI.Sprite(textureR);
+
+            // Настройка шасси
+            this.leftGear.anchor.set(0.5);
+            this.rightGear.anchor.set(0.5);
+
+            // Добавляем шасси на сцену
+            this.app.stage.addChild(this.leftGear);
+            this.app.stage.addChild(this.rightGear);
+
+            // Начальные позиции шасси относительно самолета
+            this.updatePosition();
+
+            // Состояние шасси
+            this.isRetracted = false; // Убраны ли шасси
+          }
+
+          // Обновление позиции шасси
+          updatePosition() {
+            if (!this.isRetracted) {
+              this.leftGear.x = this.airplaneSprite.x + 20;
+              this.leftGear.y = this.airplaneSprite.y + 13;
+              this.rightGear.x = this.airplaneSprite.x + 60;
+              this.rightGear.y = this.airplaneSprite.y + 10;
+            }
+          }
+
+          // Убрать шасси (скрыть)
+          retract() {
+            this.isRetracted = true;
+            this.leftGear.visible = false;
+            this.rightGear.visible = false;
+          }
+        }
+        class EngineFire {
+          constructor(app, frames, airplaneSprite) {
+            this.app = app;
+            this.airplaneSprite = airplaneSprite; // Ссылка на самолет
+
+            // Создаем анимированный спрайт огня
+            this.fireAnimation = new PIXI.AnimatedSprite(frames);
+            this.fireAnimation.anchor.set(0.5);
+            this.fireAnimation.scale.set(0.3); // Масштаб анимации
+            this.fireAnimation.animationSpeed = 0.5; // Скорость анимации
+            this.fireAnimation.loop = true; // Зацикливаем анимацию
+
+            // Начальная позиция огня
+            this.updatePosition();
+
+            // Добавляем анимацию на сцену
+            this.fireAnimation.zIndex = 15; // Убедимся, что огонь выше самолета
+            this.app.stage.addChild(this.fireAnimation);
+
+            // Состояние огня
+            this.isActive = false;
+          }
+
+          // Обновление позиции огня относительно самолета
+          updatePosition() {
+            // Позиционируем огонь позади самолета
+            this.fireAnimation.x = this.airplaneSprite.x - 15;
+            this.fireAnimation.y = this.airplaneSprite.y + 10;
+          }
+
+          // Включение огня
+          start() {
+            this.isActive = true;
+            this.fireAnimation.visible = true;
+            this.fireAnimation.play(); // Запускаем анимацию
+          }
+
+          // Отключение огня
+          stop() {
+            this.isActive = false;
+            this.fireAnimation.visible = false;
+            this.fireAnimation.stop(); // Останавливаем анимацию
+          }
+
+          // Обновление огня
+          update() {
+            if (this.isActive) {
+              this.updatePosition(); // Обновляем позицию, если самолет двигается
+            }
+          }
+
+          // Устанавливаем угол поворота огня
+          setRotation(rotation) {
+            this.fireAnimation.rotation = rotation;
+          }
+        }
+
+        //Класс создания фона в зависимости от набраных очков
+        class DiagonalParallax {
+          constructor(app, spriteConfigs) {
+            this.app = app;
+            this.spriteConfigs = spriteConfigs; // Массив конфигураций для спрайтов
+            this.currentLayer = null; // Текущий слой
+            this.speed = { x: 0, y: 0 }; // Скорость движения
+            this.speedObject = { x: 0, y: 0 }; // Скорость движения
+            this.score = 0; // Текущие очки
+            this.scale = 0; // Текущие
+            this.isActive = false; // Флаг активности эффекта
+            this.activeObjects = []; // Активные объекты
+            this.currentSpawnPoint = null; // Текущая точка спавна
+            this.spawnTicker = null; // Тикер для спавна объектов
+            this.lastSpawnTime = 0; // Время последнего спавна
+            this.minSpawnDelay = 1000; // Минимальная задержка между спавнами в миллисекундах
+          }
+
+          // Метод для постоянного спавна объектов
+          spawnObjects(score) {
+            const config = this.spriteConfigs.find(
+              (cfg) => cfg.changePoint === score
+            );
+            if (!config || !config.objects) return;
+
+            this.currentSpawnPoint = score; // Устанавливаем текущую точку
+            const objectTextures = config.objects;
+
+            // Удаляем предыдущий тикер, если он существует
+            if (this.spawnTicker) {
+              this.spawnTicker.stop();
+              this.spawnTicker.destroy();
+            }
+
+            // Создаем новый тикер для спавна
+            this.spawnTicker = new PIXI.Ticker();
+            this.spawnTicker.add((deltaTime) => {
+              // Проверка на смену точки спавна
+              if (this.currentSpawnPoint !== score) {
+                // Останавливаем спавн, если точка изменилась
+                this.spawnTicker.stop();
+                this.spawnTicker.destroy();
+                this.spawnTicker = null;
+                return;
+              }
+
+              // Текущее время в миллисекундах
+              const currentTime = performance.now();
+
+              // Проверка, прошло ли минимально необходимое время для спавна
+              if (currentTime - this.lastSpawnTime < this.minSpawnDelay) {
+                return;
+              }
+
+              // Спавн происходит с рандомной вероятностью
+              if (Math.random() > 0.98) {
+                const randomTexture =
+                  objectTextures[
+                    Math.floor(Math.random() * objectTextures.length)
+                  ];
+                const sprite = new PIXI.Sprite(randomTexture);
+
+                // Рандомные размеры
+                const scale = 0.3 + Math.random() * 0.5; // Масштаб от 0.3 до 0.8
+                sprite.scale.set(scale);
+
+                // Начальная позиция
+                sprite.x = Math.random() * this.app.screen.width;
+                sprite.y = -50; // Начинаем за пределами экрана сверху
+
+                this.app.stage.addChild(sprite);
+                this.activeObjects.push(sprite);
+
+                // Анимация движения по диагонали
+                this.speedObject = config.speedObject;
+                const speedX = this.speedObject.x;
+                const speedY = this.speedObject.y;
+
+                const ticker = new PIXI.Ticker();
+                ticker.add(() => {
+                  sprite.x -= speedX;
+                  sprite.y += speedY;
+
+                  // Удаляем объект, если он вышел за пределы экрана
+                  if (
+                    sprite.x < -100 ||
+                    sprite.y > this.app.screen.height + 100
+                  ) {
+                    this.app.stage.removeChild(sprite);
+                    this.activeObjects = this.activeObjects.filter(
+                      (obj) => obj !== sprite
+                    );
+                    ticker.stop();
+                    ticker.destroy();
+                  }
+                });
+
+                ticker.start();
+
+                // Обновляем время последнего спавна
+                this.lastSpawnTime = currentTime;
+              }
+            });
+
+            this.spawnTicker.start();
+          }
+
+          // Метод для изменения спрайта в зависимости от точек смены
+          setSpriteByScore(score) {
+            this.score = score;
+
+            // Убираем текущий слой, если он есть
+            if (this.currentLayer) {
+              this.app.stage.removeChild(this.currentLayer);
+            }
+
+            // Выбираем текстуру на основе текущей точки
+            const textureIndex = this.spriteConfigs.findIndex(
+              (cfg) => cfg.changePoint === score
+            );
+
+            if (textureIndex !== -1) {
+              const config = this.spriteConfigs[textureIndex];
+              this.currentLayer = new PIXI.TilingSprite(
+                config.texture,
+                this.app.screen.width * 2,
+                this.app.screen.height * 2
+              );
+              this.currentLayer.tilePosition.set(0.5, 0.5);
+              this.scale = config.scale;
+              this.currentLayer.scale.set(this.scale);
+              this.speed = config.speed; // Устанавливаем скорость из конфигурации
+              this.app.stage.addChild(this.currentLayer);
+            }
+          }
+
+          // Смена цвета фона
+          color(score) {
+            // Выбираем цвет на основе текущей точки
+            const colorConfig = this.spriteConfigs.find(
+              (cfg) => cfg.changePoint === score
+            );
+
+            if (colorConfig) {
+              const targetColor = colorConfig.targetColor; // Извлекаем цвет
+              animateBackgroundColor(
+                this.app,
+                this.app.renderer.backgroundColor,
+                targetColor,
+                3
+              );
+              console.log(
+                `Changing background color to: ${targetColor.toString(16)}`
+              );
+            }
+          }
+
+          // Включение эффекта
+          start() {
+            this.isActive = true;
+          }
+
+          // Отключение эффекта
+          stop() {
+            this.isActive = false;
+          }
+
+          // Обновление позиции слоя
+          update() {
+            if (this.currentLayer && this.isActive) {
+              this.currentLayer.tilePosition.x -= this.speed.x;
+              this.currentLayer.tilePosition.y += this.speed.y;
+            }
+          }
+        }
+
+        class BetManager {
+          constructor(
+            diagonalParallax,
+            spriteConfigs,
+            initialBet = 1,
+            maxMultiplier = 30,
+            step = 0.01
+          ) {
+            this.diagonalParallax = diagonalParallax; // Ссылка на объект DiagonalParallax
+            this.spriteConfigs = spriteConfigs; // Конфигурации слоев параллакса
+            this.currentBet = initialBet; // Текущая ставка
+            this.multiplier = 1.0; // Текущий коэффициент
+            this.maxMultiplier = maxMultiplier; // Максимальный коэффициент
+            this.step = step; // Шаг изменения коэффициента
+            this.isRunning = false; // Флаг активности
+            this.changePoints = spriteConfigs.map((cfg) => cfg.changePoint); // Точки смены фона
+            this.currentChangeIndex = 0; // Индекс текущей точки смены
+          }
+
+          // Запуск плавного изменения коэффициента
+          start() {
+            this.isRunning = true;
+            this.multiplier = 1.0; // Сбрасываем коэффициент
+            this.currentChangeIndex = 0; // Сбрасываем индекс
+            this.animate();
+          }
+
+          // Остановка процесса
+          stop() {
+            this.isRunning = false;
+            console.log("BetManager stopped");
+          }
+
+          // Основной цикл изменения коэффициента
+          animate() {
+            const ticker = new PIXI.Ticker();
+
+            ticker.add((deltaTime) => {
+              if (!this.isRunning) {
+                ticker.stop();
+                ticker.destroy();
+                return;
+              }
+
+              // Увеличиваем коэффициент с заданной точностью
+              this.multiplier = Math.min(
+                this.multiplier + this.step * deltaTime,
+                this.maxMultiplier
+              );
+              // console.log(`Multiplier: ${this.multiplier.toFixed(2)}`);
+
+              // Проверяем достижение точек смены фона
+              if (this.currentChangeIndex < this.changePoints.length) {
+                const nextChangePoint =
+                  this.changePoints[this.currentChangeIndex];
+                if (this.multiplier >= nextChangePoint) {
+                  console.log(
+                    `Changing background at multiplier: ${nextChangePoint}`
+                  );
+                  this.diagonalParallax.setSpriteByScore(nextChangePoint); // Вызов смены фона
+                  this.diagonalParallax.color(nextChangePoint); // Смена цвета фона
+                  this.diagonalParallax.spawnObjects(nextChangePoint); //
+                  console.log(nextChangePoint);
+                  this.currentChangeIndex++;
+                }
+              }
+
+              // Остановка при достижении максимального коэффициента
+              if (this.multiplier >= this.maxMultiplier) {
+                this.stop();
+              }
+            });
+
+            ticker.start();
+          }
+        }
+
+        const сlouds1Texture = app.loader.resources.сlouds1.texture; // небо
+        const backgroundTexture = app.loader.resources.ocean.texture; // Море
+        const runwayTexture = app.loader.resources.fence.texture; // Ограждение
+        const foregroundTexture = app.loader.resources.road.texture; // Взлетная полоса
+        const parallax = new Parallax(app, [
+          // Создаем экземпляр параллакса
+          { texture: сlouds1Texture, speed: 0.5, yPosition: 0, scale: 0.5 }, //
+          { texture: backgroundTexture, speed: 1, yPosition: 108, scale: 1 }, // Дальний фон выше
+          { texture: runwayTexture, speed: 1.2, yPosition: 58, scale: 1 }, // Полоса ближе к центру
+          { texture: foregroundTexture, speed: 1.8, yPosition: 139, scale: 1 }, // Ближний слой внизу
+        ]);
+        const introObjects = new IntroObjects(app, [
+          // Создаем начальные объекты
+          {
+            texture: app.loader.resources.garage.texture,
+            x: 350,
+            y: 140,
+            scale: 0.4,
+          },
+          {
+            texture: app.loader.resources.airport.texture,
+            x: 60,
+            y: 95,
+            scale: 0.4,
+          },
+        ]);
+        const airplaneTexture = app.loader.resources.plane.texture; // Текстура самолета
+        const landingGearLTexture =
+          app.loader.resources.landingGearLeft.texture; // Текстура шасси
+        const landingGearRTexture =
+          app.loader.resources.landingGearRight.texture; // Текстура шасси
+        const framesRocet = []; // Текстура огня
+        for (let i = 0; i <= 8; i++) {
+          const path = `${basePath}${i}.png`;
+          framesRocet.push(app.loader.resources[path].texture);
+        }
+
+        const airBalloons = [
+          app.loader.resources.AirBalloon1.texture,
+          app.loader.resources.AirBalloon2.texture,
+        ];
+        const satellites = [
+          app.loader.resources.satellite1.texture,
+          app.loader.resources.satellite2.texture,
+        ];
+        const planets = [];
+        for (let i = 1; i <= 10; i++) {
+          const path = `${basePathPlanet}${i}.png`;
+          planets.push(app.loader.resources[path].texture);
+        }
+        const planets2 = [];
+        for (let i = 1; i <= 10; i++) {
+          const path = `${basePathPlanet2}${i}.png`;
+          planets2.push(app.loader.resources[path].texture);
+        }
+
+        const spriteConfigs = [
+          {
+            texture: app.loader.resources.сlouds2.texture,
+            changePoint: 3, // Точка смены
+            speed: { x: 1, y: 1 },
+            scale: 0.8,
+            targetColor: 0x538eb5, // Цвет для смены фона
+            objects: airBalloons, // Спрайты объектов
+            speedObject: { x: 1.3, y: 1.3 },
+          },
+          {
+            texture: app.loader.resources.ozone.texture,
+            changePoint: 15, // Точка смены
+            speed: { x: 2, y: 2 },
+            scale: 1,
+            targetColor: 0x2d2f3b, // Цвет для смены фона
+            objects: satellites, // Спрайты объектов
+            speedObject: { x: 1.3, y: 1.3 },
+          },
+          {
+            texture: app.loader.resources.stars.texture,
+            changePoint: 20, // Точка смены
+            speed: { x: 2, y: 2 },
+            scale: 1,
+            targetColor: 0x201f20, // Цвет для смены фона
+            objects: planets, // Спрайты объектов
+            speedObject: { x: 2.3, y: 2.3 },
+          },
+          {
+            texture: app.loader.resources.stars2.texture,
+            changePoint: 25, // Точка смены
+            speed: { x: 0.8, y: 0.8 },
+            scale: 2,
+            targetColor: 0x0a0a0a, // Цвет для смены фона
+            objects: planets2, // Спрайты объектов
+            speedObject: { x: 3.3, y: 3.3 },
+          },
+        ];
+
+        const diagonalParallax = new DiagonalParallax(app, spriteConfigs);
+
+        const betManager = new BetManager(
+          diagonalParallax,
+          spriteConfigs, // Конфигурации слоев параллакса
+          1, // Начальная ставка
+          30, // Максимальный коэффициент
+          0.01 // Шаг изменения коэффициента
+        );
+
+        const airplane = new Airplane( // Создаем самолет
+          airplaneTexture,
+          app,
+          parallax,
+          introObjects,
+          landingGearLTexture,
+          landingGearRTexture,
+          framesRocet,
+          diagonalParallax,
+          betManager
+        );
+
+        // Добавляем в тикер обновление параллакса
+        app.ticker.add(() => {
+          if (parallax.isActive) {
+            parallax.update();
+          }
+          if (introObjects.isMoving) {
+            introObjects.update();
+          }
+          if (diagonalParallax.isActive) {
+            diagonalParallax.update();
+          }
+        });
+
+        // Запускаем движение самолета и объектов по клику
+        document.addEventListener("click", () => {
+          airplane.start();
+        });
+
+        function animateBackgroundColor(app, startColor, endColor, duration) {
+          let elapsed = 0;
+          const ticker = new PIXI.Ticker();
+
+          ticker.add((deltaTime) => {
+            elapsed += deltaTime / 60; // Конвертируем тикеры в секунды
+            const progress = Math.min(elapsed / duration, 1); // Прогресс от 0 до 1
+
+            // Линейная интерполяция цвета
+            const currentColor = lerpColor(startColor, endColor, progress);
+            app.renderer.backgroundColor = currentColor;
+
+            // Останавливаем анимацию, когда она завершена
+            if (progress >= 1) {
+              ticker.stop();
+              ticker.destroy();
+            }
+          });
+
+          ticker.start();
+        }
+
+        function lerpColor(startColor, endColor, progress) {
+          const startR = (startColor >> 16) & 0xff;
+          const startG = (startColor >> 8) & 0xff;
+          const startB = startColor & 0xff;
+
+          const endR = (endColor >> 16) & 0xff;
+          const endG = (endColor >> 8) & 0xff;
+          const endB = endColor & 0xff;
+
+          const r = Math.round(startR + (endR - startR) * progress);
+          const g = Math.round(startG + (endG - startG) * progress);
+          const b = Math.round(startB + (endB - startB) * progress);
+
+          return (r << 16) | (g << 8) | b;
+        }
+
+        // =================================================
+        // =================================================
+
+        // Остановка, если нужно:
+        setTimeout(() => {
+          betManager.stop();
+        }, 1500000); // Остановить через 15 секунд
+
+        // Плавная смена фона на черный через 3 секунды
+        // setTimeout(() => {
+        //   const targetColor = 0x000000; // Черный
+        //   animateBackgroundColor(app, backgroundColor, targetColor, 3);
+        //   backgroundColor = targetColor; // Обновляем текущий цвет
+        // }, 6000);
+
+        // Установите слой параллакса в зависимости от очков
+
+        // airplane.setDiagonalParallaxByScore(150);
+        // diagonalParallax.setSpriteByScore(50);
+
+        // =================================
+      }
     </script>
   </body>
 </html>
