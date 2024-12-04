@@ -1405,6 +1405,12 @@
         resizeTo: canvasDiv, // Размер соответствует контейнеру
         backgroundColor: backgroundColor, //  фон
       });
+      const scaleCoofecent = Math.min(
+        // app.renderer.width / 428,
+        app.renderer.height / 209
+      );
+
+      console.log(scaleCoofecent);
 
       canvasDiv.appendChild(app.view);
       // Включаем сортировку по zIndex
@@ -1426,6 +1432,13 @@
       const basePathPlanet2 = "./images/geme-frame/planet2/";
       for (let i = 1; i <= 10; i++) {
         const path = `${basePathPlanet2}${i}.png`;
+        app.loader.add(path);
+      }
+
+      const basePathBom =
+        "./images/geme-frame/bom/2a0afd67c71246c0cd1dfd3db2c87fc9JolHSiwwUAH5JM6O-";
+      for (let i = 0; i <= 25; i++) {
+        const path = `${basePathBom}${i}.png`;
         app.loader.add(path);
       }
 
@@ -1454,6 +1467,16 @@
         .load(startGame);
 
       function startGame() {
+        const globalTicker = new PIXI.Ticker();
+        globalTicker.start();
+        // Сбрасываем цвет фона на начальный
+        animateBackgroundColor(
+          app,
+          app.renderer.backgroundColor,
+          backgroundColor,
+          3,
+          globalTicker
+        );
         //Класс самолета
         class Airplane {
           constructor(
@@ -1465,7 +1488,9 @@
             landingGearRTexture,
             fireFrames,
             parallaxLayer,
-            betManager
+            betManager,
+            parachutistTextures,
+            globalTicker
           ) {
             this.app = app;
             this.parallax = parallax; // Ссылка на параллакс
@@ -1474,9 +1499,10 @@
             // Создаем спрайт самолета
             this.sprite = new PIXI.Sprite(texture);
             this.sprite.anchor.set(0, 0.5); // Центрирование
-            this.sprite.x = app.screen.width * 0.05;
-            this.sprite.y = app.screen.height - 50; // Начальная позиция
-            this.sprite.scale.set(0.5); // Масштабирование
+            this.sprite.x = app.screen.width * 0.05 * scaleCoofecent;
+            this.sprite.y = app.screen.height - 50 * scaleCoofecent; // Начальная позиция
+            this.sprite.scale.set(0.5 * scaleCoofecent); // Масштабирование
+            console.log(this.sprite.height);
 
             // Скорость и ускорение
             this.velocity = { x: 0, y: 0 };
@@ -1497,33 +1523,40 @@
 
             // Создаем огонь двигателя
             this.engineFire = new EngineFire(app, fireFrames, this.sprite);
+            // Создаем экземпляр ParachutistManager
+            this.parachutistManager = new ParachutistManager(
+              app,
+              parachutistTextures,
+              this.sprite,
+              globalTicker
+            );
 
             // Создаем диагональный параллакс
             this.diagonalParallax = parallaxLayer;
             this.betManager = betManager;
 
             // Подключаем тикер для обновления
-            this.app.ticker.add(() => this.update());
+            globalTicker.add((deltaTime) => this.update(deltaTime));
           }
 
           // Начало движения
           start() {
             if (!this.isMoving) {
               this.isMoving = true;
-              this.acceleration.x = 0.002; // Ускорение по горизонтали
+              this.acceleration.x = 0.01; // Ускорение по горизонтали
               this.engineFire.start(); // Включаем анимацию огня
               this.betManager.start();
             }
           }
 
           // Обновление самолета
-          update() {
+          update(deltaTime) {
             if (this.isMoving) {
               this.takingOff = true;
 
               // Обновляем позицию и скорость
-              this.velocity.x += this.acceleration.x;
-              this.sprite.x += this.velocity.x;
+              this.velocity.x += this.acceleration.x * deltaTime;
+              this.sprite.x += this.velocity.x * deltaTime;
 
               // Обновляем огонь двигателя
               this.engineFire.update();
@@ -1531,13 +1564,13 @@
               // Обновляем позицию шасси
               this.landingGear.updatePosition();
 
-              // Проверяем, достиг ли самолет центра экрана по оси X
+              // Проверяем, достиг ли самолет точки взлета экрана по оси X
               if (this.sprite.x >= this.app.screen.width / 4) {
-                this.parallax.startTakeOff(); // Увеличиваем скорость параллакса
+                this.parallax.startTakeOff(deltaTime); // Увеличиваем скорость параллакса
                 this.landingGear.retract(); // Убираем шасси при взлете
-                this.acceleration.y = -0.003; // Добавляем ускорение по Y для взлета
-                this.velocity.y += this.acceleration.y;
-                this.sprite.y += this.velocity.y;
+                this.acceleration.y = -0.014; // Добавляем ускорение по Y для взлета
+                this.velocity.y += this.acceleration.y * deltaTime;
+                this.sprite.y += this.velocity.y * deltaTime;
 
                 // Поворот самолета
                 this.sprite.rotation = Math.atan2(
@@ -1555,12 +1588,14 @@
                 this.stop();
                 this.parallax.moveOut();
                 this.diagonalParallax.start(); // Включаем диагональный параллакс
+                console.log("7777777");
+                this.parachutistManager.start(); // Начинаем спавн парашютистов
               }
 
               // Запускаем параллакс и движение объектов при взлете
               if (this.takingOff) {
                 this.parallax.start();
-                this.introObjects.startMoving();
+                this.introObjects.start();
               }
             }
           }
@@ -1569,15 +1604,32 @@
             this.velocity.x = 0;
             this.velocity.y = 0;
           }
+
+          deleteAirplane() {
+            // Останавливаем огонь двигателя и удаляем его
+            this.engineFire.stop();
+            this.parallax.moveOut();
+            this.parachutistManager.stop();
+
+            // Останавливаем и удаляем самолет
+            this.isMoving = false;
+            this.app.stage.removeChild(this.sprite);
+            this.sprite.x = app.screen.width * 0.05;
+            this.sprite.y = app.screen.height - 50; // Начальная позиция
+
+            console.log("Airplane and related elements deleted.");
+          }
         }
 
         //Класс фона с эфектом поралакса
         class Parallax {
-          constructor(app, layersConfig) {
+          constructor(app, layersConfig, globalTicker) {
             this.app = app;
             this.layers = [];
             this.isActive = false; // Флаг движения
             this.isMovingOut = false; // Флаг движения вниз и влево
+            // Добавляем функцию обновления в глобальный тикер
+            globalTicker.add((deltaTime) => this.update(deltaTime));
 
             layersConfig.forEach(({ texture, speed, yPosition, scale }) => {
               const layer = new PIXI.TilingSprite(
@@ -1609,18 +1661,18 @@
           }
 
           // Метод для обновления позиций слоев
-          update() {
+          update(deltaTime) {
             if (this.isActive) {
               this.layers.forEach((layer) => {
-                layer.tilePosition.x -= layer.speed; // Двигаем каждый слой с разной скоростью
+                layer.tilePosition.x -= layer.speed * deltaTime; // Двигаем каждый слой с разной скоростью
               });
             }
 
             // Если включен режим скрытия, двигаем параллакс вниз и влево
             if (this.isMovingOut) {
               this.layers.forEach((layer) => {
-                // layer.x -= layer.speed; // Движение влево
-                layer.y += layer.speed; // Движение вниз
+                // layer.x -= layer.speed * deltaTime; // Движение влево
+                layer.y += layer.speed * deltaTime; // Движение вниз
               });
 
               // Проверяем, все ли слои вышли за границы экрана
@@ -1636,9 +1688,9 @@
           }
 
           // Метод для плавного увеличения скорости (например, при взлете)
-          startTakeOff() {
+          startTakeOff(deltaTime) {
             this.layers.forEach((layer) => {
-              layer.speed += 0.005; // Увеличиваем скорость при взлете
+              layer.speed += 0.02 * deltaTime; // Увеличиваем скорость при взлете
             });
           }
 
@@ -1650,7 +1702,7 @@
         }
         //Класс декор объектов
         class IntroObjects {
-          constructor(app, textures) {
+          constructor(app, textures, globalTicker) {
             this.app = app;
 
             // Создаем массив объектов
@@ -1665,34 +1717,43 @@
             });
 
             this.isMoving = false; // Флаг движения объектов
-            this.speed = 1.5; // Скорость движения объектов
+            this.speed = 2.5; // Скорость движения объектов
+
+            // Добавляем функцию обновления в глобальный тикер
+            globalTicker.add((deltaTime) => this.update(deltaTime));
           }
 
           // Запуск движения объектов влево
-          startMoving() {
-            this.isMoving = true;
+          start() {
+            this.isMoving = true; // Устанавливаем флаг активности в true
+          }
+
+          // Остановка движения объектов
+          stop() {
+            this.isMoving = false; // Устанавливаем флаг активности в false
           }
 
           // Обновление позиции объектов
-          update() {
-            if (this.isMoving) {
-              this.objects.forEach((object, index) => {
-                object.x -= this.speed; // Двигаем объект влево
+          update(deltaTime) {
+            if (!this.isMoving) return; // Если не активны, не обновляем объекты
 
-                // Удаляем объект, если он полностью скрыт за экраном
-                if (object.x + object.width < 0) {
-                  this.app.stage.removeChild(object);
-                  this.objects.splice(index, 1);
-                }
-              });
+            this.objects.forEach((object, index) => {
+              object.x -= this.speed * deltaTime; // Двигаем объект влево с учетом deltaTime
 
-              // Останавливаем обновление, если все объекты удалены
-              if (this.objects.length === 0) {
-                this.isMoving = false;
+              // Удаляем объект, если он полностью скрыт за экраном
+              if (object.x + object.width < 0) {
+                this.app.stage.removeChild(object);
+                this.objects.splice(index, 1);
               }
+            });
+
+            // Останавливаем обновление, если все объекты удалены
+            if (this.objects.length === 0) {
+              this.isMoving = false;
             }
           }
         }
+
         //Класс шасси
         class LandingGear {
           constructor(app, textureL, textureR, airplaneSprite) {
@@ -1705,7 +1766,9 @@
 
             // Настройка шасси
             this.leftGear.anchor.set(0.5);
+            this.leftGear.scale.set(scaleCoofecent);
             this.rightGear.anchor.set(0.5);
+            this.rightGear.scale.set(scaleCoofecent);
 
             // Добавляем шасси на сцену
             this.app.stage.addChild(this.leftGear);
@@ -1733,6 +1796,8 @@
             this.isRetracted = true;
             this.leftGear.visible = false;
             this.rightGear.visible = false;
+            this.app.stage.removeChild(this.leftGear);
+            this.app.stage.removeChild(this.rightGear);
           }
         }
         class EngineFire {
@@ -1743,7 +1808,7 @@
             // Создаем анимированный спрайт огня
             this.fireAnimation = new PIXI.AnimatedSprite(frames);
             this.fireAnimation.anchor.set(0.5);
-            this.fireAnimation.scale.set(0.3); // Масштаб анимации
+            this.fireAnimation.scale.set(0.3 * scaleCoofecent); // Масштаб анимации
             this.fireAnimation.animationSpeed = 0.5; // Скорость анимации
             this.fireAnimation.loop = true; // Зацикливаем анимацию
 
@@ -1777,6 +1842,7 @@
             this.isActive = false;
             this.fireAnimation.visible = false;
             this.fireAnimation.stop(); // Останавливаем анимацию
+            this.app.stage.removeChild(this.fireAnimation);
           }
 
           // Обновление огня
@@ -1794,20 +1860,22 @@
 
         //Класс создания фона в зависимости от набраных очков
         class DiagonalParallax {
-          constructor(app, spriteConfigs) {
+          constructor(app, spriteConfigs, globalTicker) {
             this.app = app;
             this.spriteConfigs = spriteConfigs; // Массив конфигураций для спрайтов
             this.currentLayer = null; // Текущий слой
-            this.speed = { x: 0, y: 0 }; // Скорость движения
-            this.speedObject = { x: 0, y: 0 }; // Скорость движения
+            this.speed = { x: 0, y: 0 }; // Скорость движения слоя
             this.score = 0; // Текущие очки
-            this.scale = 0; // Текущие
+            this.scale = 0; // Текущий масштаб слоя
             this.isActive = false; // Флаг активности эффекта
-            this.activeObjects = []; // Активные объекты
+            this.activeObjects = []; // Активные объекты для спавна
             this.currentSpawnPoint = null; // Текущая точка спавна
-            this.spawnTicker = null; // Тикер для спавна объектов
             this.lastSpawnTime = 0; // Время последнего спавна
             this.minSpawnDelay = 1000; // Минимальная задержка между спавнами в миллисекундах
+            // this.initialBackgroundColor = 0xe28da5; // Начальный цвет фона
+
+            // Добавляем функцию обновления в глобальный тикер
+            globalTicker.add((deltaTime) => this.update(deltaTime));
           }
 
           // Метод для постоянного спавна объектов
@@ -1820,83 +1888,41 @@
             this.currentSpawnPoint = score; // Устанавливаем текущую точку
             const objectTextures = config.objects;
 
-            // Удаляем предыдущий тикер, если он существует
-            if (this.spawnTicker) {
-              this.spawnTicker.stop();
-              this.spawnTicker.destroy();
+            // Текущее время в миллисекундах
+            const currentTime = performance.now();
+
+            // Проверка, прошло ли минимально необходимое время для спавна
+            if (currentTime - this.lastSpawnTime < this.minSpawnDelay) {
+              return;
             }
 
-            // Создаем новый тикер для спавна
-            this.spawnTicker = new PIXI.Ticker();
-            this.spawnTicker.add((deltaTime) => {
-              // Проверка на смену точки спавна
-              if (this.currentSpawnPoint !== score) {
-                // Останавливаем спавн, если точка изменилась
-                this.spawnTicker.stop();
-                this.spawnTicker.destroy();
-                this.spawnTicker = null;
-                return;
-              }
+            // Спавн происходит с рандомной вероятностью
+            if (Math.random() > 0.98) {
+              const randomTexture =
+                objectTextures[
+                  Math.floor(Math.random() * objectTextures.length)
+                ];
+              const sprite = new PIXI.Sprite(randomTexture);
 
-              // Текущее время в миллисекундах
-              const currentTime = performance.now();
+              // Рандомные размеры
+              const scale = 0.3 + Math.random() * 0.5; // Масштаб от 0.3 до 0.8
+              sprite.scale.set(scale);
 
-              // Проверка, прошло ли минимально необходимое время для спавна
-              if (currentTime - this.lastSpawnTime < this.minSpawnDelay) {
-                return;
-              }
+              // Начальная позиция
+              sprite.x = Math.random() * this.app.screen.width;
+              sprite.y = -100; // Начинаем за пределами экрана сверху
 
-              // Спавн происходит с рандомной вероятностью
-              if (Math.random() > 0.98) {
-                const randomTexture =
-                  objectTextures[
-                    Math.floor(Math.random() * objectTextures.length)
-                  ];
-                const sprite = new PIXI.Sprite(randomTexture);
+              this.app.stage.addChild(sprite);
+              this.activeObjects.push(sprite);
 
-                // Рандомные размеры
-                const scale = 0.3 + Math.random() * 0.5; // Масштаб от 0.3 до 0.8
-                sprite.scale.set(scale);
+              // Устанавливаем скорость для движения объекта
+              const speedX = config.speedObject.x;
+              const speedY = config.speedObject.y;
+              sprite.speed = { x: speedX, y: speedY };
 
-                // Начальная позиция
-                sprite.x = Math.random() * this.app.screen.width;
-                sprite.y = -50; // Начинаем за пределами экрана сверху
-
-                this.app.stage.addChild(sprite);
-                this.activeObjects.push(sprite);
-
-                // Анимация движения по диагонали
-                this.speedObject = config.speedObject;
-                const speedX = this.speedObject.x;
-                const speedY = this.speedObject.y;
-
-                const ticker = new PIXI.Ticker();
-                ticker.add(() => {
-                  sprite.x -= speedX;
-                  sprite.y += speedY;
-
-                  // Удаляем объект, если он вышел за пределы экрана
-                  if (
-                    sprite.x < -100 ||
-                    sprite.y > this.app.screen.height + 100
-                  ) {
-                    this.app.stage.removeChild(sprite);
-                    this.activeObjects = this.activeObjects.filter(
-                      (obj) => obj !== sprite
-                    );
-                    ticker.stop();
-                    ticker.destroy();
-                  }
-                });
-
-                ticker.start();
-
-                // Обновляем время последнего спавна
-                this.lastSpawnTime = currentTime;
-              }
-            });
-
-            this.spawnTicker.start();
+              // Обновляем время последнего спавна
+              this.lastSpawnTime = currentTime;
+            }
           }
 
           // Метод для изменения спрайта в зависимости от точек смены
@@ -1906,6 +1932,7 @@
             // Убираем текущий слой, если он есть
             if (this.currentLayer) {
               this.app.stage.removeChild(this.currentLayer);
+              this.currentLayer = null;
             }
 
             // Выбираем текстуру на основе текущей точки
@@ -1930,18 +1957,17 @@
 
           // Смена цвета фона
           color(score) {
-            // Выбираем цвет на основе текущей точки
             const colorConfig = this.spriteConfigs.find(
               (cfg) => cfg.changePoint === score
             );
-
             if (colorConfig) {
               const targetColor = colorConfig.targetColor; // Извлекаем цвет
               animateBackgroundColor(
                 this.app,
                 this.app.renderer.backgroundColor,
                 targetColor,
-                3
+                3,
+                globalTicker
               );
               console.log(
                 `Changing background color to: ${targetColor.toString(16)}`
@@ -1951,19 +1977,55 @@
 
           // Включение эффекта
           start() {
-            this.isActive = true;
+            this.isActive = true; // Активируем эффект
           }
 
-          // Отключение эффекта
+          // Отключение эффекта и очистка сцены
           stop() {
-            this.isActive = false;
+            this.isActive = false; // Деактивируем эффект
+
+            // Удаляем текущий слой
+            if (this.currentLayer) {
+              this.app.stage.removeChild(this.currentLayer);
+              this.currentLayer = null;
+            }
+
+            // Удаляем все активные объекты
+            this.activeObjects.forEach((sprite) => {
+              this.app.stage.removeChild(sprite);
+            });
+            this.activeObjects = [];
           }
 
-          // Обновление позиции слоя
-          update() {
-            if (this.currentLayer && this.isActive) {
-              this.currentLayer.tilePosition.x -= this.speed.x;
-              this.currentLayer.tilePosition.y += this.speed.y;
+          // Обновление позиции слоя и объектов
+          update(deltaTime) {
+            if (!this.isActive) return; // Если эффект не активен, не обновляем
+
+            if (this.currentLayer) {
+              // Обновляем позицию слоя
+              this.currentLayer.tilePosition.x -= this.speed.x * deltaTime;
+              this.currentLayer.tilePosition.y += this.speed.y * deltaTime;
+
+              // Спавн объектов, если точка активна
+              if (this.currentSpawnPoint !== null) {
+                this.spawnObjects(this.currentSpawnPoint);
+              }
+
+              // Обновляем позиции активных объектов
+              for (let i = this.activeObjects.length - 1; i >= 0; i--) {
+                const sprite = this.activeObjects[i];
+                sprite.x -= sprite.speed.x * deltaTime;
+                sprite.y += sprite.speed.y * deltaTime;
+
+                // Удаляем объект, если он вышел за пределы экрана
+                if (
+                  sprite.x < -100 ||
+                  sprite.y > this.app.screen.height + 100
+                ) {
+                  this.app.stage.removeChild(sprite);
+                  this.activeObjects.splice(i, 1);
+                }
+              }
             }
           }
         }
@@ -1972,76 +2034,260 @@
           constructor(
             diagonalParallax,
             spriteConfigs,
+            globalTicker,
+            explosion,
             initialBet = 1,
             maxMultiplier = 30,
             step = 0.01
           ) {
-            this.diagonalParallax = diagonalParallax; // Ссылка на объект DiagonalParallax
-            this.spriteConfigs = spriteConfigs; // Конфигурации слоев параллакса
-            this.currentBet = initialBet; // Текущая ставка
-            this.multiplier = 1.0; // Текущий коэффициент
-            this.maxMultiplier = maxMultiplier; // Максимальный коэффициент
-            this.step = step; // Шаг изменения коэффициента
-            this.isRunning = false; // Флаг активности
-            this.changePoints = spriteConfigs.map((cfg) => cfg.changePoint); // Точки смены фона
-            this.currentChangeIndex = 0; // Индекс текущей точки смены
+            this.diagonalParallax = diagonalParallax;
+            this.spriteConfigs = spriteConfigs;
+            this.globalTicker = globalTicker;
+            this.explosion = explosion; // Ссылка на объект Explosion для вызова взрыва
+            this.currentBet = initialBet;
+            this.multiplier = 1.0;
+            this.maxMultiplier = maxMultiplier;
+            this.step = step;
+
+            this.changePoints = spriteConfigs.map((cfg) => cfg.changePoint);
+            this.currentChangeIndex = 0;
+            this.isAnimating = false;
+
+            // Добавляем функцию анимации коэффициента в глобальный тикер
+            this.globalTicker.add((deltaTime) => this.update(deltaTime));
+          }
+
+          // Метод для установки ссылки на самолет
+          setAirplane(airplane) {
+            this.airplane = airplane;
           }
 
           // Запуск плавного изменения коэффициента
           start() {
-            this.isRunning = true;
-            this.multiplier = 1.0; // Сбрасываем коэффициент
-            this.currentChangeIndex = 0; // Сбрасываем индекс
-            this.animate();
+            this.isAnimating = true;
+            this.multiplier = 1.0;
+            this.currentChangeIndex = 0;
+
+            // Генерация нового случайного коэффициента для взрыва
+            this.targetMultiplier = BetManager.getRandomMultiplier(
+              1,
+              this.maxMultiplier
+            );
           }
 
           // Остановка процесса
           stop() {
-            this.isRunning = false;
+            this.isAnimating = false;
+
             console.log("BetManager stopped");
           }
 
           // Основной цикл изменения коэффициента
-          animate() {
-            const ticker = new PIXI.Ticker();
+          update(deltaTime) {
+            if (!this.isAnimating) return;
 
-            ticker.add((deltaTime) => {
-              if (!this.isRunning) {
-                ticker.stop();
-                ticker.destroy();
-                return;
-              }
+            this.multiplier = Math.min(
+              this.multiplier + this.step * deltaTime,
+              this.maxMultiplier
+            );
 
-              // Увеличиваем коэффициент с заданной точностью
-              this.multiplier = Math.min(
-                this.multiplier + this.step * deltaTime,
-                this.maxMultiplier
+            // Проверка достижения случайного коэффициента
+            if (this.multiplier >= this.targetMultiplier) {
+              console.log(
+                `Explosion triggered at multiplier: ${this.targetMultiplier}`
               );
-              // console.log(`Multiplier: ${this.multiplier.toFixed(2)}`);
 
-              // Проверяем достижение точек смены фона
-              if (this.currentChangeIndex < this.changePoints.length) {
-                const nextChangePoint =
-                  this.changePoints[this.currentChangeIndex];
-                if (this.multiplier >= nextChangePoint) {
-                  console.log(
-                    `Changing background at multiplier: ${nextChangePoint}`
-                  );
-                  this.diagonalParallax.setSpriteByScore(nextChangePoint); // Вызов смены фона
-                  this.diagonalParallax.color(nextChangePoint); // Смена цвета фона
-                  this.diagonalParallax.spawnObjects(nextChangePoint); //
-                  console.log(nextChangePoint);
-                  this.currentChangeIndex++;
-                }
+              if (this.airplane) {
+                const { x, y } = this.airplane.sprite;
+
+                // Передаем колбэк для уведомления о завершении взрыва
+                this.explosion.createExplosion(x, y, () => {
+                  this.onExplosionComplete();
+                });
               }
 
-              // Остановка при достижении максимального коэффициента
-              if (this.multiplier >= this.maxMultiplier) {
-                this.stop();
+              this.stop();
+              return;
+            }
+
+            // Проверка достижения точки смены фона
+            if (this.currentChangeIndex < this.changePoints.length) {
+              const nextChangePoint =
+                this.changePoints[this.currentChangeIndex];
+              if (this.multiplier >= nextChangePoint) {
+                console.log(
+                  `Changing background at multiplier: ${nextChangePoint}`
+                );
+                this.diagonalParallax.setSpriteByScore(nextChangePoint);
+                this.diagonalParallax.color(nextChangePoint);
+                this.diagonalParallax.spawnObjects(nextChangePoint);
+                this.currentChangeIndex++;
               }
+            }
+
+            // Остановка при достижении максимального коэффициента
+            if (this.multiplier >= this.maxMultiplier) {
+              this.stop();
+            }
+          }
+
+          // Метод, вызываемый при завершении анимации взрыва
+          onExplosionComplete() {
+            this.resetGame();
+          }
+
+          // Метод для генерации случайного числа с точностью до 1.00
+          static getRandomMultiplier(min, max) {
+            return parseFloat((Math.random() * (max - min) + min).toFixed(2));
+          }
+
+          // Метод для сброса игры
+          resetGame() {
+            // Останавливаем глобальный тикер
+            this.diagonalParallax.stop();
+            this.airplane.deleteAirplane();
+            console.log("Game reset and started again.");
+            this.globalTicker.stop();
+
+            startGame(); // Перезапуск всей игры
+          }
+        }
+
+        class Explosion {
+          constructor(app, frames, globalTicker) {
+            this.app = app;
+            this.frames = frames; // Анимационные кадры для взрыва
+            this.globalTicker = globalTicker; // Глобальный тикер для управления анимациями
+            this.explosionSprite = null; // Спрайт для анимации взрыва
+            this.onCompleteCallback = null; // Колбэк на завершение анимации
+          }
+
+          // Метод для создания взрыва в позиции самолета
+          createExplosion(x, y, onCompleteCallback) {
+            // Удаляем текущую анимацию взрыва, если она есть
+            if (this.explosionSprite) {
+              this.app.stage.removeChild(this.explosionSprite);
+            }
+
+            // Создаем новый спрайт анимации взрыва
+            this.explosionSprite = new PIXI.AnimatedSprite(this.frames);
+            this.explosionSprite.anchor.set(0.5, 0.8); // Центрирование
+            this.explosionSprite.position.set(x, y);
+            this.explosionSprite.scale.set(0.8 * scaleCoofecent);
+            this.explosionSprite.zIndex = 25;
+            this.explosionSprite.animationSpeed = 0.8; // Скорость анимации взрыва
+            this.explosionSprite.loop = false; // Анимация не зацикливается
+
+            // Устанавливаем колбэк завершения
+            this.onCompleteCallback = onCompleteCallback;
+
+            // Добавляем анимацию на сцену и запускаем
+            this.app.stage.addChild(this.explosionSprite);
+            this.explosionSprite.play();
+
+            // Событие на завершение анимации
+            this.explosionSprite.onComplete = () => {
+              this.app.stage.removeChild(this.explosionSprite);
+              if (this.onCompleteCallback) {
+                this.onCompleteCallback(); // Вызов колбэка для уведомления о завершении
+              }
+            };
+          }
+        }
+
+        class ParachutistManager {
+          constructor(app, parachutistTextures, airplaneSprite, globalTicker) {
+            this.app = app;
+            this.parachutistTextures = parachutistTextures; // Массив текстур парашютистов
+            this.airplaneSprite = airplaneSprite; // Ссылка на самолет
+            this.parachutists = []; // Массив активных парашютистов
+            this.isActive = false; // Флаг движения
+
+            // Создаем тикер для спавна парашютисто
+            // Добавляем функцию обновления в глобальный тикер
+            globalTicker.add((deltaTime) => this.update(deltaTime));
+          }
+
+          // Запуск спавна парашютистов
+          start() {
+            this.isActive = true;
+          }
+
+          // Остановка спавна парашютистов и удаление всех парашютистов
+          stop() {
+            this.isActive = false;
+
+            // Удаляем всех активных парашютистов со сцены
+            this.parachutists.forEach((parachutist) => {
+              this.app.stage.removeChild(parachutist);
             });
 
-            ticker.start();
+            // Очищаем массив парашютистов
+            this.parachutists = [];
+          }
+
+          // Обновление тикера для создания парашютистов
+          update(deltaTime) {
+            if (!this.isActive) return;
+            // Спавн парашютиста с рандомной вероятностью
+            if (Math.random() > 0.99) {
+              this.spawnParachutist();
+            }
+
+            // Обновляем позиции активных парашютистов
+            this.parachutists.forEach((parachutist, index) => {
+              parachutist.elapsedTime += 0.05; // Увеличиваем время для расчета траектории
+
+              // Обновляем позицию по параболической траектории
+              parachutist.y =
+                parachutist.startY -
+                parachutist.initialVelocity *
+                  deltaTime *
+                  parachutist.elapsedTime +
+                0.5 *
+                  parachutist.gravity *
+                  Math.pow(parachutist.elapsedTime, 2);
+              parachutist.x += parachutist.speedX * deltaTime;
+
+              // Удаляем парашютиста, если он выходит за границу экрана
+              if (parachutist.y > this.app.screen.height + 100) {
+                this.app.stage.removeChild(parachutist);
+                this.parachutists.splice(index, 1);
+              }
+            });
+          }
+
+          // Метод для спавна парашютиста
+          spawnParachutist() {
+            // Выбираем случайную текстуру парашютиста
+            const texture =
+              this.parachutistTextures[
+                Math.floor(Math.random() * this.parachutistTextures.length)
+              ];
+            const parachutist = new PIXI.Sprite(texture);
+
+            // Задаем начальную позицию рядом с самолетом
+            parachutist.x =
+              this.airplaneSprite.x + this.airplaneSprite.width / 4;
+            // parachutist.x =
+            //   this.airplaneSprite.x + this.airplaneSprite.width / 2;
+            parachutist.startY =
+              this.airplaneSprite.y - this.airplaneSprite.height / 2; // Запоминаем начальную позицию Y
+            parachutist.y = parachutist.startY;
+
+            // Устанавливаем масштаб и добавляем парашютиста на сцену
+            parachutist.anchor.set(0.5);
+            parachutist.scale.set(0.5 + Math.random() * 0.5 * scaleCoofecent); // Случайный масштаб
+            this.app.stage.addChild(parachutist);
+
+            // Добавляем параметры для параболической траектории
+            parachutist.initialVelocity = 10 + Math.random() * 5; // Начальная вертикальная скорость (подъем)
+            parachutist.gravity = 2; // Ускорение свободного падения
+            parachutist.speedX = -2 + Math.random() * 1; // Случайный горизонтальный сдвиг (эффект ветра)
+            parachutist.elapsedTime = 0; // Время, используемое для расчета траектории
+
+            // Добавляем парашютиста в массив активных парашютистов
+            this.parachutists.push(parachutist);
           }
         }
 
@@ -2049,28 +2295,56 @@
         const backgroundTexture = app.loader.resources.ocean.texture; // Море
         const runwayTexture = app.loader.resources.fence.texture; // Ограждение
         const foregroundTexture = app.loader.resources.road.texture; // Взлетная полоса
-        const parallax = new Parallax(app, [
-          // Создаем экземпляр параллакса
-          { texture: сlouds1Texture, speed: 0.5, yPosition: 0, scale: 0.5 }, //
-          { texture: backgroundTexture, speed: 1, yPosition: 108, scale: 1 }, // Дальний фон выше
-          { texture: runwayTexture, speed: 1.2, yPosition: 58, scale: 1 }, // Полоса ближе к центру
-          { texture: foregroundTexture, speed: 1.8, yPosition: 139, scale: 1 }, // Ближний слой внизу
-        ]);
-        const introObjects = new IntroObjects(app, [
-          // Создаем начальные объекты
-          {
-            texture: app.loader.resources.garage.texture,
-            x: 350,
-            y: 140,
-            scale: 0.4,
-          },
-          {
-            texture: app.loader.resources.airport.texture,
-            x: 60,
-            y: 95,
-            scale: 0.4,
-          },
-        ]);
+        const parallax = new Parallax(
+          app,
+          [
+            // Создаем экземпляр параллакса
+            {
+              texture: сlouds1Texture,
+              speed: 1.3,
+              yPosition: -20 * scaleCoofecent,
+              scale: 0.5 * scaleCoofecent,
+            }, //
+            {
+              texture: backgroundTexture,
+              speed: 1.8,
+              yPosition: 70 * scaleCoofecent,
+              scale: 1 * scaleCoofecent,
+            }, // Дальний фон выше
+            {
+              texture: runwayTexture,
+              speed: 2,
+              yPosition: 31 * scaleCoofecent,
+              scale: 1 * scaleCoofecent,
+            }, // Полоса ближе к центру
+            {
+              texture: foregroundTexture,
+              speed: 2.5,
+              yPosition: 110 * scaleCoofecent,
+              scale: 1 * scaleCoofecent,
+            }, // Ближний слой внизу
+          ],
+          globalTicker
+        );
+        const introObjects = new IntroObjects(
+          app,
+          [
+            // Создаем начальные объекты
+            {
+              texture: app.loader.resources.garage.texture,
+              x: 350 * scaleCoofecent,
+              y: 130 * scaleCoofecent,
+              scale: 0.4 * scaleCoofecent,
+            },
+            {
+              texture: app.loader.resources.airport.texture,
+              x: 60 * scaleCoofecent,
+              y: 85 * scaleCoofecent,
+              scale: 0.4 * scaleCoofecent,
+            },
+          ],
+          globalTicker
+        );
         const airplaneTexture = app.loader.resources.plane.texture; // Текстура самолета
         const landingGearLTexture =
           app.loader.resources.landingGearLeft.texture; // Текстура шасси
@@ -2105,8 +2379,8 @@
           {
             texture: app.loader.resources.сlouds2.texture,
             changePoint: 3, // Точка смены
-            speed: { x: 1, y: 1 },
-            scale: 0.8,
+            speed: { x: 2.5, y: 2.5 },
+            scale: 0.8 * scaleCoofecent,
             targetColor: 0x538eb5, // Цвет для смены фона
             objects: airBalloons, // Спрайты объектов
             speedObject: { x: 1.3, y: 1.3 },
@@ -2114,8 +2388,8 @@
           {
             texture: app.loader.resources.ozone.texture,
             changePoint: 15, // Точка смены
-            speed: { x: 2, y: 2 },
-            scale: 1,
+            speed: { x: 3.8, y: 3.8 },
+            scale: 1 * scaleCoofecent,
             targetColor: 0x2d2f3b, // Цвет для смены фона
             objects: satellites, // Спрайты объектов
             speedObject: { x: 1.3, y: 1.3 },
@@ -2123,28 +2397,49 @@
           {
             texture: app.loader.resources.stars.texture,
             changePoint: 20, // Точка смены
-            speed: { x: 2, y: 2 },
-            scale: 1,
+            speed: { x: 4.5, y: 4.5 },
+            scale: 1 * scaleCoofecent,
             targetColor: 0x201f20, // Цвет для смены фона
             objects: planets, // Спрайты объектов
-            speedObject: { x: 2.3, y: 2.3 },
+            speedObject: { x: 2.6, y: 2.6 },
           },
           {
             texture: app.loader.resources.stars2.texture,
             changePoint: 25, // Точка смены
-            speed: { x: 0.8, y: 0.8 },
-            scale: 2,
+            speed: { x: 2.5, y: 2.5 },
+            scale: 2 * scaleCoofecent,
             targetColor: 0x0a0a0a, // Цвет для смены фона
             objects: planets2, // Спрайты объектов
             speedObject: { x: 3.3, y: 3.3 },
           },
         ];
 
-        const diagonalParallax = new DiagonalParallax(app, spriteConfigs);
+        const diagonalParallax = new DiagonalParallax(
+          app,
+          spriteConfigs,
+          globalTicker
+        );
+
+        // Создаем массив текстур парашютистов
+        const parachutistTextures = [
+          app.loader.resources.parachute0.texture,
+          app.loader.resources.parachute1.texture,
+        ];
+
+        const framesBom = []; // Текстура огня
+        for (let i = 0; i <= 25; i++) {
+          const path = `${basePathBom}${i}.png`;
+          framesBom.push(app.loader.resources[path].texture);
+        }
+
+        // Создаем объект анимации взрыва
+        const explosion = new Explosion(app, framesBom, globalTicker);
 
         const betManager = new BetManager(
           diagonalParallax,
           spriteConfigs, // Конфигурации слоев параллакса
+          globalTicker,
+          explosion,
           1, // Начальная ставка
           30, // Максимальный коэффициент
           0.01 // Шаг изменения коэффициента
@@ -2159,32 +2454,36 @@
           landingGearRTexture,
           framesRocet,
           diagonalParallax,
-          betManager
+          betManager,
+          parachutistTextures,
+          globalTicker
         );
 
-        // Добавляем в тикер обновление параллакса
-        app.ticker.add(() => {
-          if (parallax.isActive) {
-            parallax.update();
-          }
-          if (introObjects.isMoving) {
-            introObjects.update();
-          }
-          if (diagonalParallax.isActive) {
-            diagonalParallax.update();
-          }
-        });
+        betManager.setAirplane(airplane);
 
         // Запускаем движение самолета и объектов по клику
         document.addEventListener("click", () => {
           airplane.start();
         });
 
-        function animateBackgroundColor(app, startColor, endColor, duration) {
+        function animateBackgroundColor(
+          app,
+          startColor,
+          endColor,
+          duration,
+          globalTicker
+        ) {
           let elapsed = 0;
-          const ticker = new PIXI.Ticker();
 
-          ticker.add((deltaTime) => {
+          console.log("smena");
+
+          // Флаг для отслеживания состояния анимации
+          let isAnimating = true;
+
+          // Добавляем функцию анимации цвета в глобальный тикер
+          globalTicker.add((deltaTime) => {
+            if (!isAnimating) return;
+
             elapsed += deltaTime / 60; // Конвертируем тикеры в секунды
             const progress = Math.min(elapsed / duration, 1); // Прогресс от 0 до 1
 
@@ -2194,14 +2493,12 @@
 
             // Останавливаем анимацию, когда она завершена
             if (progress >= 1) {
-              ticker.stop();
-              ticker.destroy();
+              isAnimating = false; // Останавливаем анимацию
             }
           });
-
-          ticker.start();
         }
 
+        // Функция линейной интерполяции цвета
         function lerpColor(startColor, endColor, progress) {
           const startR = (startColor >> 16) & 0xff;
           const startG = (startColor >> 8) & 0xff;
@@ -2219,26 +2516,8 @@
         }
 
         // =================================================
+
         // =================================================
-
-        // Остановка, если нужно:
-        setTimeout(() => {
-          betManager.stop();
-        }, 1500000); // Остановить через 15 секунд
-
-        // Плавная смена фона на черный через 3 секунды
-        // setTimeout(() => {
-        //   const targetColor = 0x000000; // Черный
-        //   animateBackgroundColor(app, backgroundColor, targetColor, 3);
-        //   backgroundColor = targetColor; // Обновляем текущий цвет
-        // }, 6000);
-
-        // Установите слой параллакса в зависимости от очков
-
-        // airplane.setDiagonalParallaxByScore(150);
-        // diagonalParallax.setSpriteByScore(50);
-
-        // =================================
       }
     </script>
   </body>
